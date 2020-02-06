@@ -39,16 +39,22 @@ https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 
 3. Clone the repository into your projects folder on your computer.
 
-  ```git clone https://github.com/<your-user-name>/poker-app-ui.git```
+```
+git clone https://github.com/<your-user-name>/poker-app-ui.git
+```
 
 3. Make your changes to the code. Feel free to create new branches if you would like but it is not necessary at this point.
 4. Commit your code with a thoughtful message.
 
-  ```git commit -am 'Added the ability to shuffle cards'```
+```
+git commit -am 'Added the ability to shuffle cards'
+```
 
 5. Push to your repository.
 
-  ```git push```
+```
+git push
+```
 
 6. Create a pull request.
 
