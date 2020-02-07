@@ -3,10 +3,12 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "start": "vue-cli-service serve",
+        "dev": "vue-cli-service serve",
+        "start": "NODE_ENV=production node server.js ",
         "build": "vue-cli-service build",
         "test": "vue-cli-service lint && vue-cli-service test:unit",
-        "lint": "vue-cli-service lint"
+        "lint": "vue-cli-service lint",
+        "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install && npm run build && npm run start"
     },
     "dependencies": {
         "core-js": "^3.4.4",
