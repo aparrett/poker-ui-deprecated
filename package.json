@@ -8,7 +8,7 @@
         "build": "vue-cli-service build",
         "test": "vue-cli-service lint && vue-cli-service test:unit",
         "lint": "vue-cli-service lint",
-        "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install && npm run build && npm run start"
+        "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install && npm run build"
     },
     "dependencies": {
         "core-js": "^3.4.4",
