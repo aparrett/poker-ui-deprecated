@@ -1,39 +1,46 @@
 # poker-app-ui
+
 An app where you can play Texas Hold'em poker with your friends.
 
 ## Project setup
+
 ```
 npm install
 ```
 
 ### Compiles and hot-reloads for development
+
 ```
-npm run serve
+npm run start
 ```
 
 ### Compiles and minifies for production
+
 ```
 npm run build
 ```
 
-### Run your unit tests
+### Run your lint and tests
+
 ```
-npm run test:unit
+npm run test
 ```
 
 ### Lints and fixes files
+
 ```
 npm run lint
 ```
 
 ## Tech Stack
-* Vue.js
-* Jest
+
+-   Vue.js
+-   Jest
 
 ## How to Contribute
 
 1. Install Git on your machine.
-https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+   https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 
 2. Fork the repository to your own account.
 
@@ -58,13 +65,11 @@ git push
 
 6. Create a pull request.
 
-* Go to the [original repository](https://github.com/aparrett/poker-app-ui) and click the "New Pull Request" button.
-* Follow the steps. 
+-   Go to the [original repository](https://github.com/aparrett/poker-app-ui) and click the "New Pull Request" button.
+-   Follow the steps.
 
-7. Once the code is reviewed, it will be merged into master on the original repository. 
-
+7. Once the code is reviewed, it will be merged into master on the original repository.
 
 ## To-Do
+
 Send me an email at `anthonyparrett7@gmail.com` for an invite to the [Trello board](https://trello.com/b/pBbdpTSe/appstories) where we are tracking the to-do list.
-
-
