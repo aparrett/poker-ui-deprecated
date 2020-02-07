@@ -1,6 +1,6 @@
 # poker-app-ui
 
-An app where you can play Texas Hold'em poker with your friends.
+An app where you can play Texas Hold'em poker with your friends. Click [here](https://poker-friends.herokuapp.com/) to play.
 
 ## Project setup
 
