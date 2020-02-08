@@ -1,5 +1,6 @@
 <template>
-    <v-app>
+    <v-app id="app">
+        <!-- Elements in this component will be displayed on every page -->
         <v-app-bar app color="primary" dark>
             <div class="d-flex align-center">
                 <v-img
@@ -16,9 +17,7 @@
             <RegisterDialog />
         </v-app-bar>
 
-        <v-content>
-            <router-link to="/">Home</router-link>
-        </v-content>
+        <router-view />
     </v-app>
 </template>
 

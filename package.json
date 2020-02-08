@@ -11,6 +11,7 @@
     "test": "vue-cli-service lint && vue-cli-service test:unit"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "compression": "^1.7.4",
     "core-js": "^3.4.4",
     "express": "^4.17.1",

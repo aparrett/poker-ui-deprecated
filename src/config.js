@@ -6,4 +6,6 @@ const prod = {
     apiBaseUrl: 'https://poker-friends-api.herokuapp.com/'
 }
 
-export default process.env.NODE_ENV === 'production' ? prod : local
+const config = process.env.NODE_ENV === 'production' ? prod : local
+
+export default config
