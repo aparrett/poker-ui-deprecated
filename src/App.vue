@@ -11,15 +11,93 @@
                     width="40"
                 />
             </div>
-
             <v-spacer></v-spacer>
+            <v-content>
+                <v-row justify="center">
+                    <v-dialog v-model="loginDialog" max-width="290">
+                        <v-card class="elevation-12">
+                            <v-toolbar color="primary" dark flat>
+                                <v-toolbar-title>Login form</v-toolbar-title>
+                            </v-toolbar>
+                            <v-card-text>
+                                <v-form>
+                                    <v-text-field
+                                        label="Username"
+                                        name="username"
+                                        prepend-icon="person"
+                                        type="text"
+                                    ></v-text-field>
+
+                                    <v-text-field
+                                        id="password"
+                                        label="Password"
+                                        name="password"
+                                        prepend-icon="lock"
+                                        type="password"
+                                    ></v-text-field>
+                                </v-form>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn text @click.stop="loginDialog = false"
+                                    >Cancel</v-btn
+                                >
+                                <v-btn text color="primary">Login</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                </v-row>
+            </v-content>
+
+            <v-content>
+                <v-row justify="center">
+                    <v-dialog v-model="registerDialog" max-width="290">
+                        <v-card class="elevation-12">
+                            <v-toolbar color="primary" dark flat>
+                                <v-toolbar-title
+                                    >Registration form</v-toolbar-title
+                                >
+                            </v-toolbar>
+                            <v-card-text>
+                                <v-form>
+                                    <v-text-field
+                                        label="Username"
+                                        name="username"
+                                        prepend-icon="person"
+                                        type="text"
+                                    ></v-text-field>
+
+                                    <v-text-field
+                                        id="password"
+                                        label="Password"
+                                        name="password"
+                                        prepend-icon="lock"
+                                        type="password"
+                                    ></v-text-field>
+                                </v-form>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn text @click.stop="registerDialog = false"
+                                    >Cancel</v-btn
+                                >
+                                <v-btn text color="primary">Register</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                </v-row>
+            </v-content>
 
             <v-btn
-                href="https://github.com/vuetifyjs/vuetify/releases/latest"
-                target="_blank"
+                class="mr-2"
+                color="white"
+                @click.stop="loginDialog = true"
                 text
             >
-                <span class="mr-2">Login</span>
+                Login
+            </v-btn>
+            <v-btn color="white" @click.stop="registerDialog = true" text>
+                Register
             </v-btn>
         </v-app-bar>
 
@@ -41,7 +119,8 @@ export default {
     },
 
     data: () => ({
-        //
+        loginDialog: false,
+        registerDialog: false
     })
 }
 </script>
