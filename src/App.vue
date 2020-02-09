@@ -13,13 +13,13 @@
                 />
             </div>
             <v-spacer></v-spacer>
-            <div v-if="!user">
+            <div class="d-flex" v-if="!user">
                 <LoginDialog :setUser="setUser" />
                 <RegisterDialog :setUser="setUser" />
             </div>
-            <div v-else>
-                Logged in as {{ user.name }}
-                <v-btn class="mr-2" color="white" @click="logout" text>
+            <div class="d-flex align-center" v-else>
+                <div>Logged in as {{ user.name }}</div>
+                <v-btn class="ml-2" color="white" @click="logout" text>
                     Logout
                 </v-btn>
             </div>
