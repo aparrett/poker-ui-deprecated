@@ -1,5 +1,5 @@
-import Cookies from 'universal-cookie';
+import Cookies from 'universal-cookie'
 
-const cookie = new Cookies();
+const cookie = new Cookies()
 
-export default cookie;
+export default cookie
