@@ -8,7 +8,6 @@ An app where you can play Texas Hold'em poker with your friends. Click [here](ht
 npm install
 ```
 
-
 ### Compiles and hot-reloads for development
 
 ```
@@ -37,6 +36,7 @@ npm run lint
 
 -   Vue.js
 -   Jest
+-   [Vuetify](https://vuetifyjs.com/)
 
 ## How to Contribute
 

@@ -12,7 +12,7 @@ const routes = [
         component: Dashboard
     },
     {
-        path: '/games',
+        path: '/games/:id',
         name: 'games',
         component: Game
     }
