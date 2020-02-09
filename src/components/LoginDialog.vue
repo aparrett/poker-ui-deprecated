@@ -29,6 +29,7 @@
                             :rules="passwordRules"
                         />
                     </v-form>
+                    <div class="error--text">{{ errorText }}</div>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
@@ -41,6 +42,8 @@
 </template>
 
 <script>
+import { loginUser } from '../actions/auth'
+
 export default {
     data: () => ({
         valid: false,
@@ -48,12 +51,28 @@ export default {
         username: '',
         usernameRules: [v => !!v || 'Username is required'],
         password: '',
-        passwordRules: [v => !!v || 'Password is required']
+        passwordRules: [v => !!v || 'Password is required'],
+        errorText: ''
     }),
+    props: {
+        setUser: Function
+    },
     methods: {
-        submit() {
+        async submit() {
             if (this.$refs.form.validate()) {
-                console.log('submitting')
+                try {
+                    const user = await loginUser(this.username, this.password)
+                    this.errorText = ''
+                    this.showDialog = false
+                    this.setUser(user)
+                } catch (e) {
+                    if (e.response.status === 400) {
+                        this.errorText = 'Invalid Username or Password'
+                    } else {
+                        this.errorText =
+                            'Something went wrong. Please try again later.'
+                    }
+                }
             }
         }
     }

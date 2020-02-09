@@ -13,8 +13,16 @@
                 />
             </div>
             <v-spacer></v-spacer>
-            <LoginDialog />
-            <RegisterDialog />
+            <div v-if="!user">
+                <LoginDialog :setUser="setUser" />
+                <RegisterDialog :setUser="setUser" />
+            </div>
+            <div v-else>
+                Logged in as {{ user.name }}
+                <v-btn class="mr-2" color="white" @click="logout" text>
+                    Logout
+                </v-btn>
+            </div>
         </v-app-bar>
 
         <router-view />
@@ -24,6 +32,7 @@
 <script>
 import LoginDialog from './components/LoginDialog'
 import RegisterDialog from './components/RegisterDialog'
+import { getUser, logoutUser } from './actions/auth'
 
 export default {
     name: 'App',
@@ -33,8 +42,22 @@ export default {
         RegisterDialog
     },
 
-    data: () => ({}),
+    data: () => ({
+        user: undefined
+    }),
 
-    methods: {}
+    methods: {
+        setUser(user) {
+            this.user = user
+        },
+        logout() {
+            logoutUser()
+            this.user = undefined
+        }
+    },
+
+    async created() {
+        this.user = await getUser()
+    }
 }
 </script>

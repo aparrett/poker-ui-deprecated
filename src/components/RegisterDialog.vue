@@ -74,20 +74,21 @@ export default {
         ],
         errorText: ''
     }),
+    props: {
+        setUser: Function
+    },
     methods: {
         async submit() {
             if (this.$refs.form.validate()) {
                 try {
-                    await registerUser({
-                        name: this.name,
-                        password: this.password,
-                        username: this.username
-                    })
-                    this.name = ''
-                    this.username = ''
-                    this.password = ''
+                    const user = await registerUser(
+                        this.name,
+                        this.username,
+                        this.password
+                    )
                     this.errorText = ''
                     this.showDialog = false
+                    this.setUser(user)
                 } catch (e) {
                     const { data, status } = e.response
                     if (status === 400) {
