@@ -8,8 +8,8 @@
                     {{ player.name }}
                 </v-row>
             </div>
-            <div v-else-if="this.errorText.length > 0">
-                {{ this.errorText }}
+            <div v-else-if="errorText.length > 0">
+                {{ errorText }}
             </div>
             <div v-else>Loading Game...</div>
         </v-container>

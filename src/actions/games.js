@@ -21,3 +21,13 @@ export async function getGame(id) {
     })
     return res.data
 }
+
+export async function getGames() {
+    const res = await axios({
+        url: `/games`,
+        baseURL: config.apiBaseUrl,
+        method: 'GET',
+        headers: { 'x-auth-token': cookie.get('token') }
+    })
+    return res.data
+}

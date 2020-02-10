@@ -1,10 +1,21 @@
 <template>
     <v-content>
         <v-container>
+            <v-row v-for="game in games" :key="game._id">
+                <v-card class="mx-auto" max-width="344">
+                    <v-card-text>
+                        <div>Game Id: {{ game._id }}</div>
+                        <ul v-for="player in game.players" :key="player._id">
+                            <li>{{ player.name }}</li>
+                        </ul>
+                    </v-card-text>
+                </v-card>
+            </v-row>
             <v-row class="d-flex justify-center">
                 <v-btn rounded color="primary" @click="handleCreateClick"
                     >Create Game</v-btn
                 >
+
                 <v-snackbar v-model="showSnackbar" :timeout="5000">
                     {{ errorText }}
                     <v-btn color="primary" text @click="showSnackbar = false">
@@ -17,13 +28,15 @@
 </template>
 
 <script>
-import { createGame } from '../actions/games'
+import { createGame, getGames } from '../actions/games'
+
 export default {
     name: 'Dashboard',
     data() {
         return {
             showSnackbar: false,
-            errorText: ''
+            errorText: '',
+            games: []
         }
     },
     methods: {
@@ -44,6 +57,14 @@ export default {
                         'We were unable to create the game. Please try again later.'
                 }
             }
+        }
+    },
+    async beforeCreate() {
+        try {
+            this.games = await getGames()
+        } catch (e) {
+            this.showSnackbar = true
+            this.errorText = 'Something went wrong, please try again later.'
         }
     }
 }
