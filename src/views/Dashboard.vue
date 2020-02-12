@@ -4,10 +4,13 @@
             <v-row v-for="game in games" :key="game._id">
                 <v-card class="mx-auto" max-width="344">
                     <v-card-text>
-                        <div>Game Id: {{ game._id }}</div>
-                        <ul v-for="player in game.players" :key="player._id">
-                            <li>{{ player.name }}</li>
-                        </ul>
+                        <div>{{ game.name || game._id }}</div>
+                        <v-row
+                            >Player Count:
+                            {{
+                                `${game.players.length} / ${game.maxPlayers} `
+                            }}</v-row
+                        >
                         <v-btn
                             rounded
                             color="primary"
@@ -18,10 +21,16 @@
                 </v-card>
             </v-row>
             <v-row class="d-flex justify-center">
-                <v-btn rounded color="primary" @click="handleCreateClick"
+                <v-btn
+                    rounded
+                    color="primary"
+                    @click="showGameSettingsDialog = true"
                     >Create Game</v-btn
                 >
-
+                <GameSettingsDialog
+                    :showDialog="showGameSettingsDialog"
+                    :closeDialog="closeDialog"
+                />
                 <v-snackbar v-model="showSnackbar" :timeout="5000">
                     {{ errorText }}
                     <v-btn color="primary" text @click="showSnackbar = false"
@@ -34,35 +43,20 @@
 </template>
 
 <script>
-import { createGame, getGames } from '../actions/games'
+import { getGames } from '../actions/games'
+import GameSettingsDialog from '../components/GameSettingsDialog'
 
 export default {
     name: 'Dashboard',
+    components: {
+        GameSettingsDialog
+    },
     data() {
         return {
             showSnackbar: false,
             errorText: '',
-            games: []
-        }
-    },
-    methods: {
-        async handleCreateClick() {
-            try {
-                const game = await createGame()
-                this.$router.push({
-                    name: 'games',
-                    params: { id: game._id }
-                })
-            } catch (e) {
-                this.showSnackbar = true
-
-                if (e.response.status === 401) {
-                    this.errorText = 'You must login before creating a game.'
-                } else {
-                    this.errorText =
-                        'We were unable to create the game. Please try again later.'
-                }
-            }
+            games: [],
+            showGameSettingsDialog: false
         }
     },
     async beforeCreate() {
@@ -71,6 +65,11 @@ export default {
         } catch (e) {
             this.showSnackbar = true
             this.errorText = 'Something went wrong, please try again later.'
+        }
+    },
+    methods: {
+        closeDialog() {
+            this.showGameSettingsDialog = false
         }
     }
 }

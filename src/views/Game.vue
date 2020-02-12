@@ -2,7 +2,14 @@
     <v-content>
         <v-container>
             <div v-if="this.game">
-                <v-row>Playing Game: {{ game._id }}</v-row>
+                <v-row>Game: {{ game.name || game._id }}</v-row>
+                <v-row
+                    >Player Count:
+                    {{
+                        `${game.players.length} /
+                    ${game.maxPlayers} `
+                    }}</v-row
+                >
                 <v-row>Players:</v-row>
                 <v-row v-for="player in game.players" :key="player.id">
                     {{ player.name }}
