@@ -70,4 +70,8 @@ export default {
     color: #fff;
     text-decoration: none;
 }
+
+.v-dialog .v-form {
+    margin-top: 18px;
+}
 </style>
