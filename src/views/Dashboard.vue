@@ -8,6 +8,12 @@
                         <ul v-for="player in game.players" :key="player._id">
                             <li>{{ player.name }}</li>
                         </ul>
+                        <v-btn
+                            rounded
+                            color="primary"
+                            :to="`/games/${game._id}`"
+                            >View</v-btn
+                        >
                     </v-card-text>
                 </v-card>
             </v-row>
@@ -18,9 +24,9 @@
 
                 <v-snackbar v-model="showSnackbar" :timeout="5000">
                     {{ errorText }}
-                    <v-btn color="primary" text @click="showSnackbar = false">
-                        Close
-                    </v-btn>
+                    <v-btn color="primary" text @click="showSnackbar = false"
+                        >Close</v-btn
+                    >
                 </v-snackbar>
             </v-row>
         </v-container>

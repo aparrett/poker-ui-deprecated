@@ -11,6 +11,9 @@
                     transition="scale-transition"
                     width="40"
                 />
+                <router-link :to="{ path: '/' }" class="custom-link ml-3"
+                    >Dashboard</router-link
+                >
             </div>
             <v-spacer></v-spacer>
             <div class="d-flex" v-if="!user">
@@ -61,3 +64,10 @@ export default {
     }
 }
 </script>
+
+<style>
+.v-application a.custom-link {
+    color: #fff;
+    text-decoration: none;
+}
+</style>
