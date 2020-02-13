@@ -50,6 +50,9 @@ export default {
             showSnackbar: false
         }
     },
+    props: {
+        user: Object
+    },
     async beforeCreate() {
         try {
             this.game = await getGame(this.$route.params.id)
@@ -86,9 +89,9 @@ export default {
     },
     computed: {
         isSeated() {
-            // TODO: get user from App component
-            const user = { _id: 'test' }
-            return this.game.players.some(player => player._id === user._id)
+            return this.game.players.some(
+                player => player._id === this.user._id
+            )
         }
     }
 }

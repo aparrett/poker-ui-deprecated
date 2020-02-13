@@ -28,7 +28,7 @@
             </div>
         </v-app-bar>
 
-        <router-view />
+        <router-view :user="user" />
     </v-app>
 </template>
 
