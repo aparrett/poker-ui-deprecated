@@ -20,7 +20,7 @@
                 </v-row>
 
                 <v-btn
-                    v-if="!isSeated"
+                    v-if="!isSeated && user"
                     rounded
                     color="primary"
                     @click="handleSitClick"
@@ -40,6 +40,8 @@
 
 <script>
 import { getGame, joinTable } from '../actions/games'
+import io from 'socket.io-client'
+import config from '../config'
 
 export default {
     name: 'Game',
@@ -54,8 +56,14 @@ export default {
         user: Object
     },
     async beforeCreate() {
+        const socket = io(config.apiBaseUrl)
+
         try {
             this.game = await getGame(this.$route.params.id)
+            socket.emit('join', this.$route.params.id)
+            socket.on('gameUpdate', game => {
+                this.game = game
+            })
         } catch (e) {
             if (e.response.status === 404) {
                 this.errorText = 'Unable to find the specified game.'
@@ -69,8 +77,7 @@ export default {
     methods: {
         async handleSitClick() {
             try {
-                // **** TODO: Everyone needs to get the players update. ***
-                this.game.players = await joinTable(this.game._id)
+                await joinTable(this.game._id)
             } catch (e) {
                 const { status } = e.response
                 if (status === 401) {
@@ -89,8 +96,10 @@ export default {
     },
     computed: {
         isSeated() {
-            return this.game.players.some(
-                player => player._id === this.user._id
+            return (
+                this.game &&
+                this.user &&
+                this.game.players.some(player => player._id === this.user._id)
             )
         }
     }
