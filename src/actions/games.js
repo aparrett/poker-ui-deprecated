@@ -38,8 +38,17 @@ export async function joinTable(id) {
         url: `/games/${id}/players`,
         baseURL: config.apiBaseUrl,
         method: 'POST',
-        headers: { 'x-auth-token': cookie.get('token') },
-        data: { id }
+        headers: { 'x-auth-token': cookie.get('token') }
+    })
+    return res.data
+}
+
+export async function leaveTable(id) {
+    const res = await axios({
+        url: `/games/${id}/players`,
+        baseURL: config.apiBaseUrl,
+        method: 'DELETE',
+        headers: { 'x-auth-token': cookie.get('token') }
     })
     return res.data
 }

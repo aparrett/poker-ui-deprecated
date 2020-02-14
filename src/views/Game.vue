@@ -20,11 +20,14 @@
                 </v-row>
 
                 <v-btn
-                    v-if="!isSeated && user"
+                    v-if="!isSeated"
                     rounded
                     color="primary"
                     @click="handleSitClick"
                     >Sit</v-btn
+                >
+                <v-btn v-else rounded color="primary" @click="handleLeaveClick"
+                    >Leave</v-btn
                 >
             </div>
             <div v-else>Loading Game...</div>
@@ -39,7 +42,7 @@
 </template>
 
 <script>
-import { getGame, joinTable } from '../actions/games'
+import { getGame, joinTable, leaveTable } from '../actions/games'
 import io from 'socket.io-client'
 import config from '../config'
 
@@ -83,6 +86,25 @@ export default {
                 if (status === 401) {
                     this.errorText =
                         'You must be logged in to sit at the table.'
+                } else if (status === 404) {
+                    this.errorText = 'Unable to find the specified game.'
+                } else if (status === 400) {
+                    this.errorText = data
+                } else {
+                    this.errorText =
+                        'Something went wrong, please try again later.'
+                }
+
+                this.showSnackbar = true
+            }
+        },
+        async handleLeaveClick() {
+            try {
+                await leaveTable(this.game._id)
+            } catch (e) {
+                const { status, data } = e.response
+                if (status === 401) {
+                    this.errorText = 'You must be logged in to leave the table.'
                 } else if (status === 404) {
                     this.errorText = 'Unable to find the specified game.'
                 } else if (status === 400) {
