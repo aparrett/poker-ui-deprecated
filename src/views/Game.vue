@@ -79,12 +79,14 @@ export default {
             try {
                 await joinTable(this.game._id)
             } catch (e) {
-                const { status } = e.response
+                const { status, data } = e.response
                 if (status === 401) {
                     this.errorText =
                         'You must be logged in to sit at the table.'
                 } else if (status === 404) {
                     this.errorText = 'Unable to find the specified game.'
+                } else if (status === 400) {
+                    this.errorText = data
                 } else {
                     this.errorText =
                         'Something went wrong, please try again later.'
