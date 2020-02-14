@@ -63,9 +63,24 @@ export default {
 
         try {
             this.game = await getGame(this.$route.params.id)
-            socket.emit('join', this.$route.params.id)
+            socket.emit('joinGame', this.$route.params.id)
             socket.on('gameUpdate', game => {
-                this.game = game
+                if (game) {
+                    this.game = game
+                } else {
+                    let countdown = 5
+                    this.showSnackbar = true
+                    this.errorText = `The game is over. Redirecting in ${countdown} seconds..`
+                    setInterval(() => {
+                        countdown--
+                        this.errorText = `The game is over. Redirecting in ${countdown} seconds..`
+                        if (countdown === 0) {
+                            this.$router.push({
+                                name: 'dashboard'
+                            })
+                        }
+                    }, 1000)
+                }
             })
         } catch (e) {
             if (e.response.status === 404) {
