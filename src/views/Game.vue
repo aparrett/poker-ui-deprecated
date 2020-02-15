@@ -58,15 +58,21 @@ export default {
     props: {
         user: Object
     },
-    async beforeCreate() {
+    async created() {
         const socket = io(config.apiBaseUrl)
+        this.socket = socket
+        // TODO: if user connects to game they are already connected to, do not associate again and let user know.
+
+        // Let the user know that they are waiting for a second player to join to start dealing.
 
         try {
             this.game = await getGame(this.$route.params.id)
-            socket.emit('joinGame', this.$route.params.id)
+
+            socket.emit('joinGame', this.$route.params.id, this.user)
             socket.on('gameUpdate', game => {
                 if (game) {
                     this.game = game
+                    console.log('My hand', game.hand)
                 } else {
                     let countdown = 5
                     this.showSnackbar = true
@@ -95,7 +101,7 @@ export default {
     methods: {
         async handleSitClick() {
             try {
-                await joinTable(this.game._id)
+                await joinTable(this.game._id, this.socket.id)
             } catch (e) {
                 const { status, data } = e.response
                 if (status === 401) {

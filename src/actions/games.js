@@ -33,12 +33,15 @@ export async function getGames() {
     return res.data
 }
 
-export async function joinTable(id) {
+export async function joinTable(id, socketId) {
     const res = await axios({
         url: `/games/${id}/players`,
         baseURL: config.apiBaseUrl,
         method: 'POST',
-        headers: { 'x-auth-token': cookie.get('token') }
+        headers: { 'x-auth-token': cookie.get('token') },
+        data: {
+            socketId
+        }
     })
     return res.data
 }
