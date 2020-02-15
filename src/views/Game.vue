@@ -11,7 +11,12 @@
                     }}</v-row
                 >
 
-                <v-row style="text-decoration: underline; margin-top:200px;"
+                <v-row style="text-decoration: underline; margin-top:100px;">
+                    My Hand
+                </v-row>
+                <v-row>{{ game.hand[0] }} - {{ game.hand[1] }}</v-row>
+
+                <v-row style="text-decoration: underline; margin-top:100px;"
                     >Table</v-row
                 >
 
@@ -72,7 +77,7 @@ export default {
             socket.on('gameUpdate', game => {
                 if (game) {
                     this.game = game
-                    console.log('My hand', game.hand)
+                    console.log('My game', game.hand)
                 } else {
                     let countdown = 5
                     this.showSnackbar = true
