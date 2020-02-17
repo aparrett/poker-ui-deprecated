@@ -21,6 +21,13 @@
                             v-model="maxPlayers"
                             :rules="maxPlayersRules"
                         />
+                        <v-text-field
+                            id="buyIn"
+                            label="Buy In"
+                            name="buyIn"
+                            v-model="buyIn"
+                            :rules="buyInRules"
+                        />
                     </v-form>
                     <div class="error--text">{{ errorText }}</div>
                 </v-card-text>
@@ -60,6 +67,16 @@ export default {
                     Number.isInteger(parseInt(v)) ||
                     'The Max Player Count must be an integer.'
             ],
+            buyIn: 10000,
+            buyInRules: [
+                v => !!v || 'Buy In is required',
+                v =>
+                    (v && parseInt(v) > 0) ||
+                    'The buy in amount must be greater than 0.',
+                v =>
+                    Number.isInteger(parseInt(v)) ||
+                    'The buy in amount must be an integer.'
+            ],
             errorText: ''
         }
     },
@@ -71,7 +88,11 @@ export default {
         async submit() {
             if (this.$refs.form.validate()) {
                 try {
-                    const game = await createGame(this.name, this.maxPlayers)
+                    const game = await createGame({
+                        name: this.name,
+                        maxPlayers: this.maxPlayers,
+                        buyIn: this.buyIn
+                    })
                     this.$router.push({
                         name: 'games',
                         params: { id: game._id }

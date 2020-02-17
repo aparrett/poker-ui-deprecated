@@ -23,7 +23,7 @@
                 >
 
                 <v-row v-for="player in game.players" :key="player.id">
-                    {{ player.name }}
+                    {{ player.name }} - {{ player.chips }}
                 </v-row>
 
                 <v-btn
