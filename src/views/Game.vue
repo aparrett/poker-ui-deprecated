@@ -14,7 +14,9 @@
                 <v-row style="text-decoration: underline; margin-top:100px;">
                     My Hand
                 </v-row>
-                <v-row>{{ game.hand[0] }} - {{ game.hand[1] }}</v-row>
+                <v-row v-if="game.hand"
+                    >{{ game.hand[0] }} - {{ game.hand[1] }}</v-row
+                >
 
                 <v-row style="text-decoration: underline; margin-top:100px;"
                     >Table</v-row
@@ -68,7 +70,7 @@ export default {
         this.socket = socket
         // TODO: if user connects to game they are already connected to, do not associate again and let user know.
 
-        // Let the user know that they are waiting for a second player to join to start dealing.
+        // TODO: Let the user know that they are waiting for a second player to join to start dealing.
 
         try {
             this.game = await getGame(this.$route.params.id)
@@ -77,7 +79,6 @@ export default {
             socket.on('gameUpdate', game => {
                 if (game) {
                     this.game = game
-                    console.log('My game', game.hand)
                 } else {
                     let countdown = 5
                     this.showSnackbar = true
