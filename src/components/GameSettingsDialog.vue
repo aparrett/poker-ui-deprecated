@@ -28,6 +28,20 @@
                             v-model="buyIn"
                             :rules="buyInRules"
                         />
+                        <v-text-field
+                            id="bigBlind"
+                            label="Big Blind"
+                            name="bigBlind"
+                            v-model="bigBlind"
+                            :rules="bigBlindRules"
+                        />
+                        <v-text-field
+                            id="smallBlind"
+                            label="Small Blind"
+                            name="smallBlind"
+                            v-model="smallBlind"
+                            :rules="smallBlindRules"
+                        />
                     </v-form>
                     <div class="error--text">{{ errorText }}</div>
                 </v-card-text>
@@ -77,6 +91,32 @@ export default {
                     Number.isInteger(parseInt(v)) ||
                     'The buy in amount must be an integer.'
             ],
+            bigBlind: 20,
+            bigBlindRules: [
+                v => !!v || 'Big blind is required',
+                v =>
+                    (v && parseInt(v) > 0) ||
+                    'The big blind amount must be greater than 0.',
+                v =>
+                    Number.isInteger(parseInt(v)) ||
+                    'The big blind must be an integer.',
+                v =>
+                    (v && parseInt(v) > this.smallBlind) ||
+                    'The big blind must greater than the small blind.'
+            ],
+            smallBlind: 10,
+            smallBlindRules: [
+                v => !!v || 'Small blind is required',
+                v =>
+                    (v && parseInt(v) > 0) ||
+                    'The small blind must be greater than 0.',
+                v =>
+                    Number.isInteger(parseInt(v)) ||
+                    'The small blind must be an integer.',
+                v =>
+                    (v && parseInt(v) < this.bigBlind) ||
+                    'The small blind must less than the big blind.'
+            ],
             errorText: ''
         }
     },
@@ -91,7 +131,9 @@ export default {
                     const game = await createGame({
                         name: this.name,
                         maxPlayers: this.maxPlayers,
-                        buyIn: this.buyIn
+                        buyIn: this.buyIn,
+                        bigBlind: this.bigBlind,
+                        smallBlind: this.smallBlind
                     })
                     this.$router.push({
                         name: 'games',
