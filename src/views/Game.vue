@@ -22,8 +22,16 @@
                     >Table</v-row
                 >
 
-                <v-row v-for="player in game.players" :key="player.id">
-                    {{ player.name }} - {{ player.chips }}
+                <v-row
+                    v-for="player in game.players"
+                    :key="player.id"
+                    class="mb-2"
+                >
+                    <div>{{ player.name }} - {{ player.chips }}</div>
+                    <br />
+                    <div v-if="player.isTurn">
+                        - Acting..
+                    </div>
                 </v-row>
 
                 <v-btn
