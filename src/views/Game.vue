@@ -33,7 +33,23 @@
                         - Acting..
                     </div>
                 </v-row>
-
+                <v-row
+                    v-if="isTurn"
+                    style="margin-top: 50px; margin-bottom: 50px;"
+                >
+                    <v-btn rounded color="primary" @click="handleCallClick"
+                        >Call</v-btn
+                    >
+                    <v-btn rounded color="primary" @click="handleRaiseClick"
+                        >Raise</v-btn
+                    >
+                    <v-btn rounded color="primary" @click="handleCheckClick"
+                        >Check</v-btn
+                    >
+                    <v-btn rounded color="primary" @click="handleFoldClick"
+                        >Fold</v-btn
+                    >
+                </v-row>
                 <v-btn
                     v-if="!isSeated"
                     rounded
@@ -151,7 +167,11 @@ export default {
 
                 this.showSnackbar = true
             }
-        }
+        },
+        async handleCallClick() {},
+        async handleRaiseClick() {},
+        async handleCheckClick() {},
+        async handleFoldClick() {}
     },
     computed: {
         isSeated() {
@@ -159,6 +179,16 @@ export default {
                 this.game &&
                 this.user &&
                 this.game.players.some(player => player._id === this.user._id)
+            )
+        },
+        isTurn() {
+            return (
+                this.game &&
+                this.user &&
+                this.game.players.find(
+                    player =>
+                        player._id === this.user._id && player.isTurn === true
+                )
             )
         }
     }
