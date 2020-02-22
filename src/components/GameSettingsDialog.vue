@@ -22,11 +22,11 @@
                             :rules="maxPlayersRules"
                         />
                         <v-text-field
-                            id="buyIn"
-                            label="Buy In"
-                            name="buyIn"
-                            v-model="buyIn"
-                            :rules="buyInRules"
+                            id="maxBuyIn"
+                            label="Max Buy-In"
+                            name="maxBuyIn"
+                            v-model="maxBuyIn"
+                            :rules="maxBuyInRules"
                         />
                         <v-text-field
                             id="bigBlind"
@@ -81,15 +81,18 @@ export default {
                     Number.isInteger(parseInt(v)) ||
                     'The Max Player Count must be an integer.'
             ],
-            buyIn: 10000,
-            buyInRules: [
-                v => !!v || 'Buy In is required',
+            maxBuyIn: 10000,
+            maxBuyInRules: [
+                v => !!v || 'Max Buy-In is required',
                 v =>
                     (v && parseInt(v) > 0) ||
-                    'The buy in amount must be greater than 0.',
+                    'The max buy-in amount must be greater than 0.',
                 v =>
                     Number.isInteger(parseInt(v)) ||
-                    'The buy in amount must be an integer.'
+                    'The max buy-in amount must be an integer.',
+                v =>
+                    (v && parseInt(v) > this.bigBlind) ||
+                    'The max buy-in amount must greater than the big blind.'
             ],
             bigBlind: 20,
             bigBlindRules: [
@@ -131,7 +134,7 @@ export default {
                     const game = await createGame({
                         name: this.name,
                         maxPlayers: this.maxPlayers,
-                        buyIn: this.buyIn,
+                        maxBuyIn: this.maxBuyIn,
                         bigBlind: this.bigBlind,
                         smallBlind: this.smallBlind
                     })

@@ -10,6 +10,8 @@
                     ${game.maxPlayers} `
                     }}</v-row
                 >
+                <v-row>Max Buy-in: {{ game.maxBuyIn }}</v-row>
+                <v-row>Current Big Blind: {{ game.bigBlind }}</v-row>
 
                 <v-row style="text-decoration: underline; margin-top:100px;">
                     My Hand
@@ -54,7 +56,7 @@
                     v-if="!isSeated"
                     rounded
                     color="primary"
-                    @click="handleSitClick"
+                    @click="showJoinGameDialog = true"
                     >Sit</v-btn
                 >
                 <v-btn v-else rounded color="primary" @click="handleLeaveClick"
@@ -62,12 +64,22 @@
                 >
             </div>
             <div v-else>Loading Game...</div>
+
             <v-snackbar v-model="showSnackbar" :timeout="10000">
                 {{ errorText }}
                 <v-btn color="primary" text @click="showSnackbar = false"
                     >Close</v-btn
                 >
             </v-snackbar>
+
+            <JoinGameDialog
+                v-if="game"
+                :closeDialog="closeJoinGameDialog"
+                :showDialog="showJoinGameDialog"
+                :handleSubmit="handleSitClick"
+                :maxBuyIn="game.maxBuyIn"
+                :bigBlind="game.bigBlind"
+            />
         </v-container>
     </v-content>
 </template>
@@ -76,6 +88,7 @@
 import { getGame, joinTable, leaveTable } from '../actions/games'
 import io from 'socket.io-client'
 import config from '../config'
+import JoinGameDialog from '../components/JoinGameDialog'
 
 export default {
     name: 'Game',
@@ -83,8 +96,12 @@ export default {
         return {
             game: undefined,
             errorText: '',
-            showSnackbar: false
+            showSnackbar: false,
+            showJoinGameDialog: false
         }
+    },
+    components: {
+        JoinGameDialog
     },
     props: {
         user: Object
@@ -103,6 +120,7 @@ export default {
             socket.on('gameUpdate', game => {
                 if (game) {
                     this.game = game
+                    console.log('Received game update', game)
                 } else {
                     let countdown = 5
                     this.showSnackbar = true
@@ -129,9 +147,10 @@ export default {
         }
     },
     methods: {
-        async handleSitClick() {
+        async handleSitClick(buyIn) {
             try {
-                await joinTable(this.game._id, this.socket.id)
+                this.showJoinGameDialog = false
+                await joinTable(this.game._id, this.socket.id, buyIn)
             } catch (e) {
                 const { status, data } = e.response
                 if (status === 401) {
@@ -171,7 +190,10 @@ export default {
         async handleCallClick() {},
         async handleRaiseClick() {},
         async handleCheckClick() {},
-        async handleFoldClick() {}
+        async handleFoldClick() {},
+        closeJoinGameDialog() {
+            this.showJoinGameDialog = false
+        }
     },
     computed: {
         isSeated() {
