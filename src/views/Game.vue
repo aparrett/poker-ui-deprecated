@@ -13,14 +13,21 @@
                 <v-row>Max Buy-in: {{ game.maxBuyIn }}</v-row>
                 <v-row>Current Big Blind: {{ game.bigBlind }}</v-row>
 
-                <v-row style="text-decoration: underline; margin-top:100px;">
+                <v-row style="text-decoration: underline; margin-top:50px;">
                     My Hand
                 </v-row>
                 <v-row v-if="game.hand"
                     >{{ game.hand[0] }} - {{ game.hand[1] }}</v-row
                 >
 
-                <v-row style="text-decoration: underline; margin-top:100px;"
+                <v-row style="text-decoration: underline; margin-top:50px;">
+                    Current Bets
+                </v-row>
+                <v-row v-for="bet in game.bets" :key="bet.username">
+                    {{ bet.username }} - {{ bet.amount }}
+                </v-row>
+
+                <v-row style="text-decoration: underline; margin-top:50px;"
                     >Table</v-row
                 >
 
