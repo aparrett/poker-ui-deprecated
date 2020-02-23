@@ -30,9 +30,17 @@
                     class="mb-2"
                 >
                     <div>{{ player.name }} - {{ player.chips }}</div>
-                    <br />
+                    <div v-if="player.isDealer">
+                        - D
+                    </div>
+                    <div v-if="player.isBigBlind">
+                        - Big Blind
+                    </div>
+                    <div v-if="player.isSmallBlind">
+                        - Small Blind
+                    </div>
                     <div v-if="player.isTurn">
-                        - Acting..
+                        - Acting
                     </div>
                 </v-row>
                 <v-row
