@@ -16,7 +16,7 @@
                 <v-row style="text-decoration: underline; margin-top:50px;">
                     My Hand
                 </v-row>
-                <v-row v-if="game.hand"
+                <v-row v-if="game.hand && game.hand.length > 0"
                     >{{ game.hand[0] }} - {{ game.hand[1] }}</v-row
                 >
 
