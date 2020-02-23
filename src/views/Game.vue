@@ -120,7 +120,6 @@ export default {
             socket.on('gameUpdate', game => {
                 if (game) {
                     this.game = game
-                    console.log('Received game update', game)
                 } else {
                     let countdown = 5
                     this.showSnackbar = true
