@@ -3,88 +3,46 @@
         <v-container>
             <div v-if="this.game">
                 <v-row>Game: {{ game.name || game._id }}</v-row>
-                <v-row
-                    >Player Count:
+                <v-row>
+                    Player Count:
                     {{
                         `${game.players.length} /
                     ${game.maxPlayers} `
-                    }}</v-row
-                >
+                    }}
+                </v-row>
                 <v-row>Max Buy-in: {{ game.maxBuyIn }}</v-row>
                 <v-row>Current Big Blind: {{ game.bigBlind }}</v-row>
 
-                <v-row style="text-decoration: underline; margin-top:50px;">
-                    My Hand
-                </v-row>
-                <v-row v-if="game.hand && game.hand.length > 0"
-                    >{{ game.hand[0] }} - {{ game.hand[1] }}</v-row
-                >
+                <v-row style="text-decoration: underline; margin-top:50px;">My Hand</v-row>
+                <v-row v-if="game.hand && game.hand.length > 0">{{ game.hand[0] }} - {{ game.hand[1] }}</v-row>
 
-                <v-row style="text-decoration: underline; margin-top:50px;">
-                    Current Bets
-                </v-row>
-                <v-row v-for="bet in game.bets" :key="bet.username">
-                    {{ bet.username }} - {{ bet.amount }}
-                </v-row>
+                <v-row style="text-decoration: underline; margin-top:30px;">Current Bets</v-row>
+                <v-row v-for="bet in game.bets" :key="bet.username">{{ bet.username }} - {{ bet.amount }}</v-row>
+                <v-row style="margin-top:10px;">Pot Total: {{ game.pot }}</v-row>
 
-                <v-row style="text-decoration: underline; margin-top:50px;"
-                    >Table</v-row
-                >
+                <v-row style="text-decoration: underline; margin-top:30px;">Table</v-row>
 
-                <v-row
-                    v-for="player in game.players"
-                    :key="player.id"
-                    class="mb-2"
-                >
+                <v-row v-for="player in game.players" :key="player.id" class="mb-2">
+                    <div v-if="player.isDealer">(D)</div>
                     <div>{{ player.name }} - {{ player.chips }}</div>
-                    <div v-if="player.isDealer">
-                        - D
-                    </div>
-                    <div v-if="player.isBigBlind">
-                        - Big Blind
-                    </div>
-                    <div v-if="player.isSmallBlind">
-                        - Small Blind
-                    </div>
-                    <div v-if="player.isTurn">
-                        - Acting
-                    </div>
+                    <div v-if="player.isBigBlind">- Big Blind</div>
+                    <div v-if="player.isSmallBlind">- Small Blind</div>
+                    <div v-if="player.isTurn">- Acting</div>
                 </v-row>
-                <v-row
-                    v-if="isTurn"
-                    style="margin-top: 50px; margin-bottom: 50px;"
-                >
-                    <v-btn rounded color="primary" @click="handleCallClick"
-                        >Call</v-btn
-                    >
-                    <v-btn rounded color="primary" @click="handleRaiseClick"
-                        >Raise</v-btn
-                    >
-                    <v-btn rounded color="primary" @click="handleCheckClick"
-                        >Check</v-btn
-                    >
-                    <v-btn rounded color="primary" @click="handleFoldClick"
-                        >Fold</v-btn
-                    >
+                <v-row v-if="isTurn" style="margin-top: 30px; margin-bottom: 50px;">
+                    <v-btn v-if="canCall" rounded color="primary" @click="handleCallClick">Call</v-btn>
+                    <v-btn v-if="canRaise" rounded color="primary" @click="handleRaiseClick">Raise</v-btn>
+                    <v-btn v-if="canCheck" rounded color="primary" @click="handleCheckClick">Check</v-btn>
+                    <v-btn rounded color="primary" @click="handleFoldClick">Fold</v-btn>
                 </v-row>
-                <v-btn
-                    v-if="!isSeated"
-                    rounded
-                    color="primary"
-                    @click="showJoinGameDialog = true"
-                    >Sit</v-btn
-                >
-                <v-btn v-else rounded color="primary" @click="handleLeaveClick"
-                    >Leave</v-btn
-                >
+                <v-btn v-if="!player" rounded color="primary" @click="showJoinGameDialog = true">Sit</v-btn>
+                <v-btn v-else rounded color="primary" @click="handleLeaveClick">Leave</v-btn>
             </div>
             <div v-else>Loading Game...</div>
 
             <v-snackbar v-model="showSnackbar" :timeout="10000">
                 {{ errorText }}
-                <v-btn color="primary" text @click="showSnackbar = false"
-                    >Close</v-btn
-                >
+                <v-btn color="primary" text @click="showSnackbar = false">Close</v-btn>
             </v-snackbar>
 
             <JoinGameDialog
@@ -100,7 +58,7 @@
 </template>
 
 <script>
-import { getGame, joinTable, leaveTable } from '../actions/games'
+import { getGame, joinTable, leaveTable, call } from '../actions/games'
 import io from 'socket.io-client'
 import config from '../config'
 import JoinGameDialog from '../components/JoinGameDialog'
@@ -125,8 +83,6 @@ export default {
         const socket = io(config.apiBaseUrl)
         this.socket = socket
         // TODO: if user connects to game they are already connected to, do not associate again and let user know.
-
-        // TODO: Let the user know that they are waiting for a second player to join to start dealing.
 
         try {
             this.game = await getGame(this.$route.params.id)
@@ -168,15 +124,13 @@ export default {
             } catch (e) {
                 const { status, data } = e.response
                 if (status === 401) {
-                    this.errorText =
-                        'You must be logged in to sit at the table.'
+                    this.errorText = 'You must be logged in to sit at the table.'
                 } else if (status === 404) {
                     this.errorText = 'Unable to find the specified game.'
                 } else if (status === 400) {
                     this.errorText = data
                 } else {
-                    this.errorText =
-                        'Something went wrong, please try again later.'
+                    this.errorText = 'Something went wrong, please try again later.'
                 }
 
                 this.showSnackbar = true
@@ -194,14 +148,26 @@ export default {
                 } else if (status === 400) {
                     this.errorText = data
                 } else {
-                    this.errorText =
-                        'Something went wrong, please try again later.'
+                    this.errorText = 'Something went wrong, please try again later.'
                 }
 
                 this.showSnackbar = true
             }
         },
-        async handleCallClick() {},
+        async handleCallClick() {
+            try {
+                await call(this.game._id)
+            } catch (e) {
+                const { status, data } = e.response
+                if (status === 400) {
+                    this.errorText = data
+                } else {
+                    this.errorText = 'Something went wrong, please try again later.'
+                }
+
+                this.showSnackbar = true
+            }
+        },
         async handleRaiseClick() {},
         async handleCheckClick() {},
         async handleFoldClick() {},
@@ -210,22 +176,36 @@ export default {
         }
     },
     computed: {
-        isSeated() {
-            return (
-                this.game &&
-                this.user &&
-                this.game.players.some(player => player._id === this.user._id)
-            )
-        },
         isTurn() {
-            return (
-                this.game &&
-                this.user &&
-                this.game.players.find(
-                    player =>
-                        player._id === this.user._id && player.isTurn === true
-                )
-            )
+            return this.player && this.player.isTurn
+        },
+        player() {
+            return this.game && this.user && this.game.players.find(player => player._id === this.user._id)
+        },
+        playerBet() {
+            if (!this.player) {
+                return false
+            }
+            const bet = this.game.bets.find(b => b.playerId === this.player._id)
+            return bet ? bet.amount : false
+        },
+        largestBet() {
+            if (!this.game) {
+                return
+            }
+            return Math.max(...this.game.bets.map(bet => bet.amount))
+        },
+        canCall() {
+            return this.game.lastToRaiseId !== this.player._id && this.playerBet !== this.largestBet
+        },
+        canRaise() {
+            return this.player.chips > this.largestBet && this.game.lastToRaiseId !== this.player._id
+        },
+        canCheck() {
+            if (!this.playerBet || this.playerBet < this.largestBet) {
+                return false
+            }
+            return true
         }
     }
 }

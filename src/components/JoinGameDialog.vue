@@ -39,18 +39,10 @@ export default {
             buyIn: this.maxBuyIn,
             buyInRules: [
                 v => !!v || 'Buy-in is required',
-                v =>
-                    (v && parseInt(v) > 0) ||
-                    'The buy-in amount must be greater than 0.',
-                v =>
-                    Number.isInteger(parseInt(v)) ||
-                    'The buy-in amount must be an integer.',
-                v =>
-                    (v && parseInt(v) <= this.maxBuyIn) ||
-                    'The buy-in amount cannot be more than the max buy-in.',
-                v =>
-                    (v && parseInt(v) > this.bigBlind) ||
-                    'The buy-in amount must greater than the big blind.'
+                v => (v && parseInt(v) > 0) || 'The buy-in amount must be greater than 0.',
+                v => Number.isInteger(parseInt(v)) || 'The buy-in amount must be an integer.',
+                v => (v && parseInt(v) <= this.maxBuyIn) || 'The buy-in amount cannot be more than the max buy-in.',
+                v => (v && parseInt(v) > this.bigBlind) || 'The buy-in amount must greater than the big blind.'
             ],
             errorText: ''
         }

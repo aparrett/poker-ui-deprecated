@@ -56,3 +56,13 @@ export async function leaveTable(id) {
     })
     return res.data
 }
+
+export async function call(gameId) {
+    const res = await axios({
+        url: `/games/${gameId}/call`,
+        baseURL: config.apiBaseUrl,
+        method: 'POST',
+        headers: { 'x-auth-token': cookie.get('token') }
+    })
+    return res.data
+}
