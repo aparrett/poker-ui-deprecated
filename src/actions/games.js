@@ -66,3 +66,13 @@ export async function call(gameId) {
     })
     return res.data
 }
+
+export async function check(gameId) {
+    const res = await axios({
+        url: `/games/${gameId}/check`,
+        baseURL: config.apiBaseUrl,
+        method: 'POST',
+        headers: { 'x-auth-token': cookie.get('token') }
+    })
+    return res.data
+}

@@ -12,6 +12,7 @@
                 </v-row>
                 <v-row>Max Buy-in: {{ game.maxBuyIn }}</v-row>
                 <v-row>Current Big Blind: {{ game.bigBlind }}</v-row>
+                <v-row>Phase: {{ game.phase }}</v-row>
 
                 <v-row style="text-decoration: underline; margin-top:50px;">My Hand</v-row>
                 <v-row v-if="game.hand && game.hand.length > 0">{{ game.hand[0] }} - {{ game.hand[1] }}</v-row>
@@ -58,7 +59,7 @@
 </template>
 
 <script>
-import { getGame, joinTable, leaveTable, call } from '../actions/games'
+import { getGame, joinTable, leaveTable, call, check } from '../actions/games'
 import io from 'socket.io-client'
 import config from '../config'
 import JoinGameDialog from '../components/JoinGameDialog'
@@ -169,7 +170,20 @@ export default {
             }
         },
         async handleRaiseClick() {},
-        async handleCheckClick() {},
+        async handleCheckClick() {
+            try {
+                await check(this.game._id)
+            } catch (e) {
+                const { status, data } = e.response
+                if (status === 400) {
+                    this.errorText = data
+                } else {
+                    this.errorText = 'Something went wrong, please try again later.'
+                }
+
+                this.showSnackbar = true
+            }
+        },
         async handleFoldClick() {},
         closeJoinGameDialog() {
             this.showJoinGameDialog = false
