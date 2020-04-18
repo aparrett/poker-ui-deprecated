@@ -7,13 +7,7 @@
                 </v-toolbar>
                 <v-card-text>
                     <v-form v-model="valid" ref="form">
-                        <v-text-field
-                            label="Name"
-                            name="name"
-                            v-model="name"
-                            type="text"
-                            :rules="nameRules"
-                        />
+                        <v-text-field label="Name" name="name" v-model="name" type="text" :rules="nameRules" />
                         <v-text-field
                             id="maxPlayers"
                             label="Max Player Count"
@@ -71,54 +65,30 @@ export default {
             maxPlayers: 12,
             maxPlayersRules: [
                 v => !!v || 'Max Player Count is required',
-                v =>
-                    (v && parseInt(v) <= 12) ||
-                    'The max player count cannot be more than 12.',
-                v =>
-                    (v && parseInt(v) > 0) ||
-                    'The max player count must be greater than 0.',
-                v =>
-                    Number.isInteger(parseInt(v)) ||
-                    'The Max Player Count must be an integer.'
+                v => (v && parseInt(v) <= 12) || 'The max player count cannot be more than 12.',
+                v => (v && parseInt(v) > 0) || 'The max player count must be greater than 0.',
+                v => Number.isInteger(parseInt(v)) || 'The Max Player Count must be an integer.'
             ],
             maxBuyIn: 10000,
             maxBuyInRules: [
                 v => !!v || 'Max Buy-In is required',
-                v =>
-                    (v && parseInt(v) > 0) ||
-                    'The max buy-in amount must be greater than 0.',
-                v =>
-                    Number.isInteger(parseInt(v)) ||
-                    'The max buy-in amount must be an integer.',
-                v =>
-                    (v && parseInt(v) > this.bigBlind) ||
-                    'The max buy-in amount must greater than the big blind.'
+                v => (v && parseInt(v) > 0) || 'The max buy-in amount must be greater than 0.',
+                v => Number.isInteger(parseInt(v)) || 'The max buy-in amount must be an integer.',
+                v => (v && parseInt(v) > this.bigBlind) || 'The max buy-in amount must greater than the big blind.'
             ],
             bigBlind: 20,
             bigBlindRules: [
                 v => !!v || 'Big blind is required',
-                v =>
-                    (v && parseInt(v) > 0) ||
-                    'The big blind amount must be greater than 0.',
-                v =>
-                    Number.isInteger(parseInt(v)) ||
-                    'The big blind must be an integer.',
-                v =>
-                    (v && parseInt(v) > this.smallBlind) ||
-                    'The big blind must greater than the small blind.'
+                v => (v && parseInt(v) > 0) || 'The big blind amount must be greater than 0.',
+                v => Number.isInteger(parseInt(v)) || 'The big blind must be an integer.',
+                v => (v && parseInt(v) > this.smallBlind) || 'The big blind must greater than the small blind.'
             ],
             smallBlind: 10,
             smallBlindRules: [
                 v => !!v || 'Small blind is required',
-                v =>
-                    (v && parseInt(v) > 0) ||
-                    'The small blind must be greater than 0.',
-                v =>
-                    Number.isInteger(parseInt(v)) ||
-                    'The small blind must be an integer.',
-                v =>
-                    (v && parseInt(v) < this.bigBlind) ||
-                    'The small blind must less than the big blind.'
+                v => (v && parseInt(v) > 0) || 'The small blind must be greater than 0.',
+                v => Number.isInteger(parseInt(v)) || 'The small blind must be an integer.',
+                v => (v && parseInt(v) < this.bigBlind) || 'The small blind must less than the big blind.'
             ],
             errorText: ''
         }
@@ -148,13 +118,11 @@ export default {
                     const { data, status } = e.response
 
                     if (status === 401) {
-                        this.errorText =
-                            'You must login before creating a game.'
+                        this.errorText = 'You must login before creating a game.'
                     } else if (status === 400) {
                         this.errorText = data
                     } else {
-                        this.errorText =
-                            'We were unable to create the game. Please try again later.'
+                        this.errorText = 'We were unable to create the game. Please try again later.'
                     }
                 }
             }

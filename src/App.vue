@@ -11,9 +11,7 @@
                     transition="scale-transition"
                     width="40"
                 />
-                <router-link :to="{ path: '/' }" class="custom-link ml-3"
-                    >Dashboard</router-link
-                >
+                <router-link :to="{ path: '/' }" class="custom-link ml-3">Dashboard</router-link>
             </div>
             <v-spacer></v-spacer>
             <div class="d-flex" v-if="!user">

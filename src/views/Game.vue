@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { getGame, joinTable, leaveTable, call, check } from '../actions/games'
+import { getGame, joinTable, leaveTable, call, check, fold } from '../actions/games'
 import io from 'socket.io-client'
 import config from '../config'
 import JoinGameDialog from '../components/JoinGameDialog'
@@ -184,7 +184,20 @@ export default {
                 this.showSnackbar = true
             }
         },
-        async handleFoldClick() {},
+        async handleFoldClick() {
+            try {
+                await fold(this.game._id)
+            } catch (e) {
+                const { status, data } = e.response
+                if (status === 400) {
+                    this.errorText = data
+                } else {
+                    this.errorText = 'Something went wrong, please try again later.'
+                }
+
+                this.showSnackbar = true
+            }
+        },
         closeJoinGameDialog() {
             this.showJoinGameDialog = false
         }

@@ -69,8 +69,7 @@ export default {
                     if (e.response.status === 400) {
                         this.errorText = 'Invalid Username or Password'
                     } else {
-                        this.errorText =
-                            'Something went wrong. Please try again later.'
+                        this.errorText = 'Something went wrong. Please try again later.'
                     }
                 }
             }

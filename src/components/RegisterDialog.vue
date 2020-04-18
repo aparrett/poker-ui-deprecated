@@ -81,11 +81,7 @@ export default {
         async submit() {
             if (this.$refs.form.validate()) {
                 try {
-                    const user = await registerUser(
-                        this.name,
-                        this.username,
-                        this.password
-                    )
+                    const user = await registerUser(this.name, this.username, this.password)
                     this.errorText = ''
                     this.showDialog = false
                     this.setUser(user)
@@ -94,8 +90,7 @@ export default {
                     if (status === 400) {
                         this.errorText = data
                     } else {
-                        this.errorText =
-                            'There was a problem registering your account. Please try again later.'
+                        this.errorText = 'There was a problem registering your account. Please try again later.'
                     }
                 }
             }
