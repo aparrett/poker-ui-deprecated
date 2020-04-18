@@ -32,7 +32,7 @@
                 </v-row>
                 <v-row v-if="isTurn" style="margin-top: 30px; margin-bottom: 50px;">
                     <v-btn v-if="canCall" rounded color="primary" @click="handleCallClick">Call</v-btn>
-                    <v-btn v-if="canRaise" rounded color="primary" @click="handleRaiseClick">Raise</v-btn>
+                    <v-btn v-if="canRaise" rounded color="primary" @click="showRaiseDialog = true">Raise</v-btn>
                     <v-btn v-if="canCheck" rounded color="primary" @click="handleCheckClick">Check</v-btn>
                     <v-btn rounded color="primary" @click="handleFoldClick">Fold</v-btn>
                 </v-row>
@@ -45,6 +45,14 @@
                 {{ errorText }}
                 <v-btn color="primary" text @click="showSnackbar = false">Close</v-btn>
             </v-snackbar>
+
+            <RaiseDialog
+                v-if="canRaise"
+                :closeDialog="closeRaiseDialog"
+                :showDialog="showRaiseDialog"
+                :handleSubmit="handleRaise"
+                :chips="player.chips"
+            />
 
             <JoinGameDialog
                 v-if="game"
@@ -59,10 +67,11 @@
 </template>
 
 <script>
-import { getGame, joinTable, leaveTable, call, check, fold } from '../actions/games'
+import { getGame, joinTable, leaveTable, call, check, fold, raise } from '../actions/games'
 import io from 'socket.io-client'
 import config from '../config'
 import JoinGameDialog from '../components/JoinGameDialog'
+import RaiseDialog from '../components/RaiseDialog'
 
 export default {
     name: 'Game',
@@ -71,11 +80,13 @@ export default {
             game: undefined,
             errorText: '',
             showSnackbar: false,
-            showJoinGameDialog: false
+            showJoinGameDialog: false,
+            showRaiseDialog: false
         }
     },
     components: {
-        JoinGameDialog
+        JoinGameDialog,
+        RaiseDialog
     },
     props: {
         user: Object
@@ -169,7 +180,22 @@ export default {
                 this.showSnackbar = true
             }
         },
-        async handleRaiseClick() {},
+        async handleRaise(amount) {
+            this.showRaiseDialog = false
+
+            try {
+                await raise(this.game._id, amount)
+            } catch (e) {
+                const { status, data } = e.response
+                if (status === 400) {
+                    this.errorText = data
+                } else {
+                    this.errorText = 'Something went wrong, please try again later.'
+                }
+
+                this.showSnackbar = true
+            }
+        },
         async handleCheckClick() {
             try {
                 await check(this.game._id)
@@ -200,6 +226,9 @@ export default {
         },
         closeJoinGameDialog() {
             this.showJoinGameDialog = false
+        },
+        closeRaiseDialog() {
+            this.showRaiseDialog = false
         }
     },
     computed: {
@@ -217,19 +246,26 @@ export default {
             return bet ? bet.amount : false
         },
         largestBet() {
-            if (!this.game) {
-                return
+            if (!this.game || this.game.bets.length === 0) {
+                return 0
             }
             return Math.max(...this.game.bets.map(bet => bet.amount))
         },
         canCall() {
-            return this.game.lastToRaiseId !== this.player._id && this.playerBet !== this.largestBet
+            return this.game.bets.length > 0 && this.playerBet !== this.largestBet
         },
         canRaise() {
-            return this.player.chips > this.largestBet && this.game.lastToRaiseId !== this.player._id
+            if (!this.player) {
+                return false
+            }
+            const amountToCall = this.playerBet ? this.largestBet - this.playerBet : this.largestBet
+            return this.player.chips > amountToCall && this.game.lastToRaiseId !== this.player._id
         },
         canCheck() {
-            if (!this.playerBet || this.playerBet < this.largestBet) {
+            if (
+                (!this.playerBet && this.game.bets.length > 0) ||
+                (this.playerBet && this.playerBet < this.largestBet)
+            ) {
                 return false
             }
             return true

@@ -86,3 +86,14 @@ export async function fold(gameId) {
     })
     return res.data
 }
+
+export async function raise(gameId, amount) {
+    const res = await axios({
+        url: `/games/${gameId}/raise`,
+        baseURL: config.apiBaseUrl,
+        method: 'POST',
+        headers: { 'x-auth-token': cookie.get('token') },
+        data: { amount }
+    })
+    return res.data
+}
