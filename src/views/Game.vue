@@ -1,44 +1,58 @@
 <template>
     <v-content>
         <v-container>
-            <div v-if="this.game">
-                <v-row>Game: {{ game.name || game._id }}</v-row>
-                <v-row>
-                    Player Count:
-                    {{
-                        `${game.players.length} /
+            <v-row v-if="game">
+                <v-col md="4">
+                    <v-row>Game: {{ game.name || game._id }}</v-row>
+                    <v-row>
+                        Player Count:
+                        {{
+                            `${game.players.length} /
                     ${game.maxPlayers} `
-                    }}
-                </v-row>
-                <v-row>Max Buy-in: {{ game.maxBuyIn }}</v-row>
-                <v-row>Current Big Blind: {{ game.bigBlind }}</v-row>
-                <v-row>Phase: {{ game.phase }}</v-row>
+                        }}
+                    </v-row>
+                    <v-row>Max Buy-in: {{ game.maxBuyIn }}</v-row>
+                    <v-row>Current Big Blind: {{ game.bigBlind }}</v-row>
+                    <v-row>Phase: {{ game.phase }}</v-row>
 
-                <v-row style="text-decoration: underline; margin-top:50px;">My Hand</v-row>
-                <v-row v-if="game.hand && game.hand.length > 0">{{ game.hand[0] }} - {{ game.hand[1] }}</v-row>
+                    <v-row style="text-decoration: underline; margin-top:50px;">My Hand</v-row>
+                    <v-row v-if="game.hand && game.hand.length > 0">
+                        <div class="card">{{ game.hand[0] }}</div>
+                        <div class="card">{{ game.hand[1] }}</div>
+                    </v-row>
 
-                <v-row style="text-decoration: underline; margin-top:30px;">Current Bets</v-row>
-                <v-row v-for="bet in game.bets" :key="bet.username">{{ bet.username }} - {{ bet.amount }}</v-row>
-                <v-row style="margin-top:10px;">Pot Total: {{ game.pot }}</v-row>
+                    <v-row style="text-decoration: underline; margin-top:30px;">Current Bets</v-row>
+                    <v-row v-for="bet in game.bets" :key="bet.username">{{ bet.username }} - {{ bet.amount }}</v-row>
+                    <v-row style="margin-top:10px;">Pot Total: {{ game.pot }}</v-row>
 
-                <v-row style="text-decoration: underline; margin-top:30px;">Table</v-row>
+                    <v-row style="text-decoration: underline; margin-top:30px;">Table</v-row>
 
-                <v-row v-for="player in game.players" :key="player.id" class="mb-2">
-                    <div v-if="player.isDealer">(D)</div>
-                    <div>{{ player.name }} - {{ player.chips }}</div>
-                    <div v-if="player.isBigBlind">- Big Blind</div>
-                    <div v-if="player.isSmallBlind">- Small Blind</div>
-                    <div v-if="player.isTurn">- Acting</div>
-                </v-row>
-                <v-row v-if="isTurn" style="margin-top: 30px; margin-bottom: 50px;">
-                    <v-btn v-if="canCall" rounded color="primary" @click="handleCallClick">Call</v-btn>
-                    <v-btn v-if="canRaise" rounded color="primary" @click="showRaiseDialog = true">Raise</v-btn>
-                    <v-btn v-if="canCheck" rounded color="primary" @click="handleCheckClick">Check</v-btn>
-                    <v-btn rounded color="primary" @click="handleFoldClick">Fold</v-btn>
-                </v-row>
-                <v-btn v-if="!player" rounded color="primary" @click="showJoinGameDialog = true">Sit</v-btn>
-                <v-btn v-else rounded color="primary" @click="handleLeaveClick">Leave</v-btn>
-            </div>
+                    <v-row v-for="player in game.players" :key="player.id" class="mb-2">
+                        <div v-if="player.isDealer">(D)</div>
+                        <div>{{ player.name }} - {{ player.chips }}</div>
+                        <div v-if="player.isBigBlind">- Big Blind</div>
+                        <div v-if="player.isSmallBlind">- Small Blind</div>
+                        <div v-if="player.isTurn">- Acting</div>
+                    </v-row>
+                    <v-row v-if="isTurn" style="margin-top: 30px; margin-bottom: 50px;">
+                        <v-btn v-if="canCall" rounded color="primary" @click="handleCallClick">Call</v-btn>
+                        <v-btn v-if="canRaise" rounded color="primary" @click="showRaiseDialog = true">Raise</v-btn>
+                        <v-btn v-if="canCheck" rounded color="primary" @click="handleCheckClick">Check</v-btn>
+                        <v-btn rounded color="primary" @click="handleFoldClick">Fold</v-btn>
+                    </v-row>
+                    <v-btn v-if="!player" rounded color="primary" @click="showJoinGameDialog = true">Sit</v-btn>
+                    <v-btn v-else rounded color="primary" @click="handleLeaveClick">Leave</v-btn>
+                </v-col>
+                <v-col md="6">
+                    <v-row class="d-flex justify-md-center align-center" style="height: 100%;">
+                        <div class="d-flex community-container">
+                            <div class="card" v-for="card in game.communityCards" :key="card">
+                                {{ card }}
+                            </div>
+                        </div>
+                    </v-row>
+                </v-col>
+            </v-row>
             <div v-else>Loading Game...</div>
 
             <v-snackbar v-model="showSnackbar" :timeout="10000">
@@ -273,3 +287,18 @@ export default {
     }
 }
 </script>
+
+<style>
+.community-container {
+    width: 280px;
+}
+.card {
+    border: 1px solid black;
+    height: 60px;
+    width: 40px;
+    padding: 8px;
+}
+.card + .card {
+    margin-left: 20px;
+}
+</style>
