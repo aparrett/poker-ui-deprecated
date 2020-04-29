@@ -1,58 +1,55 @@
 <template>
     <v-content>
         <v-container>
-            <v-row v-if="game">
-                <v-col md="4">
-                    <v-row>Game: {{ game.name || game._id }}</v-row>
-                    <v-row>
-                        Player Count:
-                        {{
-                            `${game.players.length} /
-                    ${game.maxPlayers} `
-                        }}
-                    </v-row>
-                    <v-row>Max Buy-in: {{ game.maxBuyIn }}</v-row>
-                    <v-row>Current Big Blind: {{ game.bigBlind }}</v-row>
-                    <v-row>Phase: {{ game.phase }}</v-row>
-
-                    <v-row style="text-decoration: underline; margin-top:50px;">My Hand</v-row>
-                    <v-row v-if="game.hand && game.hand.length > 0">
-                        <div class="card">{{ game.hand[0] }}</div>
-                        <div class="card">{{ game.hand[1] }}</div>
-                    </v-row>
-
-                    <v-row style="text-decoration: underline; margin-top:30px;">Current Bets</v-row>
-                    <v-row v-for="bet in game.bets" :key="bet.username">{{ bet.username }} - {{ bet.amount }}</v-row>
-                    <v-row style="margin-top:10px;">Pot Total: {{ game.pot }}</v-row>
-
-                    <v-row style="text-decoration: underline; margin-top:30px;">Table</v-row>
-
-                    <v-row v-for="player in game.players" :key="player.id" class="mb-2">
-                        <div v-if="player.isDealer">(D)</div>
-                        <div>{{ player.name }} - {{ player.chips }}</div>
-                        <div v-if="player.isBigBlind">- Big Blind</div>
-                        <div v-if="player.isSmallBlind">- Small Blind</div>
-                        <div v-if="player.isTurn">- Acting</div>
-                    </v-row>
-                    <v-row v-if="isTurn" style="margin-top: 30px; margin-bottom: 50px;">
-                        <v-btn v-if="canCall" rounded color="primary" @click="handleCallClick">Call</v-btn>
-                        <v-btn v-if="canRaise" rounded color="primary" @click="showRaiseDialog = true">Raise</v-btn>
-                        <v-btn v-if="canCheck" rounded color="primary" @click="handleCheckClick">Check</v-btn>
-                        <v-btn rounded color="primary" @click="handleFoldClick">Fold</v-btn>
-                    </v-row>
+            <div v-if="game">
+                <v-row>
+                    <v-col sm="4">
+                        <v-row>Game: {{ game.name || game._id }}</v-row>
+                        <v-row> Player Count: {{ `${game.players.length} / ${game.maxPlayers} ` }} </v-row>
+                        <v-row>Max Buy-in: {{ game.maxBuyIn }}</v-row>
+                        <v-row>Current Big Blind: {{ game.bigBlind }}</v-row>
+                    </v-col>
+                    <v-col sm="4">
+                        <v-row style="text-decoration: underline;">My Hand</v-row>
+                        <v-row v-if="game.hand && game.hand.length > 0">
+                            <div class="card">{{ game.hand[0] }}</div>
+                            <div class="card">{{ game.hand[1] }}</div>
+                        </v-row>
+                    </v-col>
+                </v-row>
+                <v-row style="justify-content: center;">
+                    <div id="table">
+                        <div
+                            v-for="(player, index) in game.players"
+                            :key="player._id"
+                            :class="`player player-${index} ${player.isTurn && 'acting'}`"
+                        >
+                            <div>{{ player.name }} - {{ player.chips }}</div>
+                            <div v-if="game.bets.find(b => b.playerId === player._id)">
+                                ${{ game.bets.find(b => b.playerId === player._id).amount }}
+                            </div>
+                            <div v-if="player.isDealer">(D)</div>
+                        </div>
+                        <v-row v-if="isTurn" style="margin-top: 30px; margin-bottom: 50px;">
+                            <v-btn v-if="canCall" rounded color="primary" @click="handleCallClick">Call</v-btn>
+                            <v-btn v-if="canRaise" rounded color="primary" @click="showRaiseDialog = true">Raise</v-btn>
+                            <v-btn v-if="canCheck" rounded color="primary" @click="handleCheckClick">Check</v-btn>
+                            <v-btn rounded color="primary" @click="handleFoldClick">Fold</v-btn>
+                        </v-row>
+                        <v-row class="d-flex justify-sm-center align-center" style="height: 100%;">
+                            <div class="d-flex community-container">
+                                <div class="card" v-for="card in game.communityCards" :key="card">
+                                    {{ card }}
+                                </div>
+                            </div>
+                        </v-row>
+                    </div>
+                </v-row>
+                <v-row>
                     <v-btn v-if="!player" rounded color="primary" @click="showJoinGameDialog = true">Sit</v-btn>
                     <v-btn v-else rounded color="primary" @click="handleLeaveClick">Leave</v-btn>
-                </v-col>
-                <v-col md="6">
-                    <v-row class="d-flex justify-md-center align-center" style="height: 100%;">
-                        <div class="d-flex community-container">
-                            <div class="card" v-for="card in game.communityCards" :key="card">
-                                {{ card }}
-                            </div>
-                        </div>
-                    </v-row>
-                </v-col>
-            </v-row>
+                </v-row>
+            </div>
             <div v-else>Loading Game...</div>
 
             <v-snackbar v-model="showSnackbar" :timeout="10000">
@@ -116,6 +113,41 @@ export default {
             socket.emit('joinGame', this.$route.params.id, this.user)
             socket.on('gameUpdate', game => {
                 if (game) {
+                    // TODO: DELETE THIS LOGIC - ONLY USED FOR STYLING UI
+                    const player = {
+                        hand: [
+                            'U2FsdGVkX1/A1fhVIabwnAiQ1/yoFApi6Ia8S97Fpa0=',
+                            'U2FsdGVkX195OCMAvht3pXaymcC6vbs6LbQ9OVFKE8Q='
+                        ],
+                        socketId: 'hsMS8vuTyIrUjyA2AAAH',
+                        chips: 9980,
+                        hasActed: false,
+                        isTurn: false,
+                        isDealer: false,
+                        isSmallBlind: false,
+                        isBigBlind: false
+                    }
+                    const players = [
+                        { ...player, name: 'Player 0', _id: 'p0', username: 'p0', isDealer: true },
+                        { ...player, name: 'Player 1', _id: 'p1', username: 'p1', isSmallBlind: true },
+                        { ...player, name: 'Player 2', _id: 'p2', username: 'p2', isBigBlind: true },
+                        { ...player, name: 'Player 3', _id: 'p3', username: 'p3', isTurn: true },
+                        { ...player, name: 'Player 4', _id: 'p4', username: 'p4' },
+                        { ...player, name: 'Player 5', _id: 'p5', username: 'p5' },
+                        { ...player, name: 'Player 6', _id: 'p6', username: 'p6' },
+                        { ...player, name: 'Player 7', _id: 'p7', username: 'p7' },
+                        { ...player, name: 'Player 8', _id: 'p8', username: 'p8' },
+                        { ...player, name: 'Player 9', _id: 'p9', username: 'p9' },
+                        { ...player, name: 'Player 10', _id: 'p10', username: 'p10' },
+                        { ...player, name: 'Player 11', _id: 'p11', username: 'p11' }
+                    ]
+                    const bets = [
+                        { playerId: 'p1', amount: 10 },
+                        { playerId: 'p2', amount: 20 }
+                    ]
+                    game.players = players
+                    game.communityCards = ['AH', 'KD', 'JS', 'QD', 'TS']
+                    game.bets = bets
                     this.game = game
                 } else {
                     let countdown = 5
@@ -289,6 +321,11 @@ export default {
 </script>
 
 <style>
+#table {
+    height: 500px;
+    position: relative;
+    width: 900px;
+}
 .community-container {
     width: 280px;
 }
@@ -300,5 +337,76 @@ export default {
 }
 .card + .card {
     margin-left: 20px;
+}
+
+.player.acting {
+    border: 4px solid blue;
+}
+.player {
+    font-weight: bold;
+    position: absolute;
+    height: 100px;
+    width: 75px;
+    border: 1px solid black;
+}
+
+.player-0 {
+    right: 15.3%;
+    bottom: 0;
+}
+
+.player-1 {
+    right: calc(27.6% + 75px);
+    bottom: 0;
+}
+
+.player-2 {
+    left: calc(27.6% + 75px);
+    bottom: 0;
+}
+
+.player-3 {
+    left: 15.3%;
+    bottom: 0;
+}
+
+.player-4 {
+    left: 0;
+    bottom: 20%;
+}
+
+.player-5 {
+    left: 0;
+    top: 20%;
+}
+
+.player-6 {
+    left: 15.3%;
+    top: 0;
+}
+
+.player-7 {
+    left: calc(27.6% + 75px);
+    top: 0;
+}
+
+.player-8 {
+    right: calc(27.6% + 75px);
+    top: 0;
+}
+
+.player-9 {
+    right: 15.3%;
+    top: 0;
+}
+
+.player-10 {
+    right: 0;
+    top: 20%;
+}
+
+.player-11 {
+    right: 0;
+    bottom: 20%;
 }
 </style>
