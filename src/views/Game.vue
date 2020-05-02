@@ -24,7 +24,8 @@
                             :key="player._id"
                             :class="`player player-${index} ${player.isTurn && 'acting'}`"
                         >
-                            <div>{{ player.name }} - {{ player.chips }}</div>
+                            <div>{{ player.name }}</div>
+                            <div>{{ player.chips }}</div>
                             <div v-if="game.bets.find(b => b.playerId === player._id)">
                                 ${{ game.bets.find(b => b.playerId === player._id).amount }}
                             </div>
@@ -320,7 +321,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 #table {
     height: 500px;
     position: relative;
@@ -339,15 +340,16 @@ export default {
     margin-left: 20px;
 }
 
-.player.acting {
-    border: 4px solid blue;
-}
 .player {
     font-weight: bold;
     position: absolute;
     height: 100px;
     width: 75px;
     border: 1px solid black;
+
+    .acting {
+        border: 4px solid blue;
+    }
 }
 
 .player-0 {
