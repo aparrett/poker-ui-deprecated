@@ -9,6 +9,14 @@
                         <v-row>Max Buy-in: {{ game.maxBuyIn }}</v-row>
                         <v-row>Current Big Blind: {{ game.bigBlind }}</v-row>
                     </v-col>
+                    <v-col sm="8">
+                        <div v-if="isTurn">
+                            <v-btn v-if="canCall" rounded color="primary" @click="handleCallClick">Call</v-btn>
+                            <v-btn v-if="canRaise" rounded color="primary" @click="showRaiseDialog = true">Raise</v-btn>
+                            <v-btn v-if="canCheck" rounded color="primary" @click="handleCheckClick">Check</v-btn>
+                            <v-btn rounded color="primary" @click="handleFoldClick">Fold</v-btn>
+                        </div>
+                    </v-col>
                 </v-row>
                 <v-row style="justify-content: center;">
                     <div id="table">
@@ -37,12 +45,7 @@
                             </div>
                             <div v-else-if="player.hand" class="hand">Hand</div>
                         </div>
-                        <v-row v-if="isTurn" style="margin-top: 30px; margin-bottom: 50px;">
-                            <v-btn v-if="canCall" rounded color="primary" @click="handleCallClick">Call</v-btn>
-                            <v-btn v-if="canRaise" rounded color="primary" @click="showRaiseDialog = true">Raise</v-btn>
-                            <v-btn v-if="canCheck" rounded color="primary" @click="handleCheckClick">Check</v-btn>
-                            <v-btn rounded color="primary" @click="handleFoldClick">Fold</v-btn>
-                        </v-row>
+
                         <v-row class="d-flex justify-sm-center align-center" style="height: 100%;">
                             <div class="d-flex community-container">
                                 <div class="card" v-for="card in game.communityCards" :key="card">
