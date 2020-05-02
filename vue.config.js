@@ -1,3 +1,10 @@
 module.exports = {
-    transpileDependencies: ['vuetify']
+    transpileDependencies: ['vuetify'],
+
+    pluginOptions: {
+        'style-resources-loader': {
+            preProcessor: 'sass',
+            patterns: []
+        }
+    }
 }

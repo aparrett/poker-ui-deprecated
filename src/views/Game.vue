@@ -347,7 +347,7 @@ export default {
     width: 75px;
     border: 1px solid black;
 
-    .acting {
+    &.acting {
         border: 4px solid blue;
     }
 }
