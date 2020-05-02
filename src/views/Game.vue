@@ -9,27 +9,33 @@
                         <v-row>Max Buy-in: {{ game.maxBuyIn }}</v-row>
                         <v-row>Current Big Blind: {{ game.bigBlind }}</v-row>
                     </v-col>
-                    <v-col sm="4">
-                        <v-row style="text-decoration: underline;">My Hand</v-row>
-                        <v-row v-if="game.hand && game.hand.length > 0">
-                            <div class="card">{{ game.hand[0] }}</div>
-                            <div class="card">{{ game.hand[1] }}</div>
-                        </v-row>
-                    </v-col>
                 </v-row>
                 <v-row style="justify-content: center;">
                     <div id="table">
                         <div
                             v-for="(player, index) in game.players"
                             :key="player._id"
-                            :class="`player player-${index} ${player.isTurn && 'acting'}`"
+                            :class="`player player-${index} ${player.isTurn ? 'acting' : ''}`"
                         >
-                            <div>{{ player.name }}</div>
-                            <div>{{ player.chips }}</div>
-                            <div v-if="game.bets.find(b => b.playerId === player._id)">
+                            <div class="top sub">
+                                <div>{{ player.name }}</div>
+                            </div>
+                            <div class="bottom sub">
+                                <div>${{ player.chips }}</div>
+                            </div>
+
+                            <div v-if="game.bets.find(b => b.playerId === player._id)" class="currentBet">
                                 ${{ game.bets.find(b => b.playerId === player._id).amount }}
                             </div>
-                            <div v-if="player.isDealer">(D)</div>
+                            <div v-if="player.isDealer" class="dealerChip">(D)</div>
+                            <div
+                                v-if="game.hand && game.hand.length > 0 && userPlayer && userPlayer._id === player._id"
+                                class="hand userHand"
+                            >
+                                <div class="card">{{ game.hand[0] }}</div>
+                                <div class="card">{{ game.hand[1] }}</div>
+                            </div>
+                            <div v-else-if="player.hand" class="hand">Hand</div>
                         </div>
                         <v-row v-if="isTurn" style="margin-top: 30px; margin-bottom: 50px;">
                             <v-btn v-if="canCall" rounded color="primary" @click="handleCallClick">Call</v-btn>
@@ -47,7 +53,7 @@
                     </div>
                 </v-row>
                 <v-row>
-                    <v-btn v-if="!player" rounded color="primary" @click="showJoinGameDialog = true">Sit</v-btn>
+                    <v-btn v-if="!userPlayer" rounded color="primary" @click="showJoinGameDialog = true">Sit</v-btn>
                     <v-btn v-else rounded color="primary" @click="handleLeaveClick">Leave</v-btn>
                 </v-row>
             </div>
@@ -63,7 +69,7 @@
                 :closeDialog="closeRaiseDialog"
                 :showDialog="showRaiseDialog"
                 :handleSubmit="handleRaise"
-                :chips="player.chips"
+                :chips="userPlayer.chips"
             />
 
             <JoinGameDialog
@@ -114,41 +120,6 @@ export default {
             socket.emit('joinGame', this.$route.params.id, this.user)
             socket.on('gameUpdate', game => {
                 if (game) {
-                    // TODO: DELETE THIS LOGIC - ONLY USED FOR STYLING UI
-                    const player = {
-                        hand: [
-                            'U2FsdGVkX1/A1fhVIabwnAiQ1/yoFApi6Ia8S97Fpa0=',
-                            'U2FsdGVkX195OCMAvht3pXaymcC6vbs6LbQ9OVFKE8Q='
-                        ],
-                        socketId: 'hsMS8vuTyIrUjyA2AAAH',
-                        chips: 9980,
-                        hasActed: false,
-                        isTurn: false,
-                        isDealer: false,
-                        isSmallBlind: false,
-                        isBigBlind: false
-                    }
-                    const players = [
-                        { ...player, name: 'Player 0', _id: 'p0', username: 'p0', isDealer: true },
-                        { ...player, name: 'Player 1', _id: 'p1', username: 'p1', isSmallBlind: true },
-                        { ...player, name: 'Player 2', _id: 'p2', username: 'p2', isBigBlind: true },
-                        { ...player, name: 'Player 3', _id: 'p3', username: 'p3', isTurn: true },
-                        { ...player, name: 'Player 4', _id: 'p4', username: 'p4' },
-                        { ...player, name: 'Player 5', _id: 'p5', username: 'p5' },
-                        { ...player, name: 'Player 6', _id: 'p6', username: 'p6' },
-                        { ...player, name: 'Player 7', _id: 'p7', username: 'p7' },
-                        { ...player, name: 'Player 8', _id: 'p8', username: 'p8' },
-                        { ...player, name: 'Player 9', _id: 'p9', username: 'p9' },
-                        { ...player, name: 'Player 10', _id: 'p10', username: 'p10' },
-                        { ...player, name: 'Player 11', _id: 'p11', username: 'p11' }
-                    ]
-                    const bets = [
-                        { playerId: 'p1', amount: 10 },
-                        { playerId: 'p2', amount: 20 }
-                    ]
-                    game.players = players
-                    game.communityCards = ['AH', 'KD', 'JS', 'QD', 'TS']
-                    game.bets = bets
                     this.game = game
                 } else {
                     let countdown = 5
@@ -280,16 +251,16 @@ export default {
     },
     computed: {
         isTurn() {
-            return this.player && this.player.isTurn
+            return this.userPlayer && this.userPlayer.isTurn
         },
-        player() {
+        userPlayer() {
             return this.game && this.user && this.game.players.find(player => player._id === this.user._id)
         },
         playerBet() {
-            if (!this.player) {
+            if (!this.userPlayer) {
                 return false
             }
-            const bet = this.game.bets.find(b => b.playerId === this.player._id)
+            const bet = this.game.bets.find(b => b.playerId === this.userPlayer._id)
             return bet ? bet.amount : false
         },
         largestBet() {
@@ -302,11 +273,11 @@ export default {
             return this.game.bets.length > 0 && this.playerBet !== this.largestBet
         },
         canRaise() {
-            if (!this.player) {
+            if (!this.userPlayer) {
                 return false
             }
             const amountToCall = this.playerBet ? this.largestBet - this.playerBet : this.largestBet
-            return this.player.chips > amountToCall && this.game.lastToRaiseId !== this.player._id
+            return this.userPlayer.chips > amountToCall && this.game.lastToRaiseId !== this.userPlayer._id
         },
         canCheck() {
             if (
@@ -322,6 +293,14 @@ export default {
 </script>
 
 <style lang="scss">
+$cardWidth: 40px;
+$cardHeight: 60px;
+$handVerticalOffset: -($cardHeight) - 5px;
+$handHorizontalOffset: -($cardWidth * 2) - 5px;
+
+$currentBetWidth: 70px;
+$currentBetOffset: -($currentBetWidth + 7px);
+
 #table {
     height: 500px;
     position: relative;
@@ -329,15 +308,21 @@ export default {
 }
 .community-container {
     width: 280px;
+
+    .card + .card {
+        margin-left: 20px;
+    }
 }
+
 .card {
     border: 1px solid black;
-    height: 60px;
-    width: 40px;
+    height: $cardHeight;
+    width: $cardWidth;
     padding: 8px;
 }
-.card + .card {
-    margin-left: 20px;
+
+.userHand {
+    width: ($cardWidth * 2);
 }
 
 .player {
@@ -350,65 +335,245 @@ export default {
     &.acting {
         border: 4px solid blue;
     }
+
+    .hand {
+        position: absolute;
+
+        &.userHand {
+            .card {
+                display: inline-block;
+            }
+        }
+    }
+
+    .sub {
+        position: absolute;
+        text-align: center;
+        width: 100%;
+    }
+
+    .top {
+        top: 0;
+    }
+
+    .bottom {
+        bottom: 0;
+    }
+
+    .currentBet {
+        position: absolute;
+        width: $currentBetWidth;
+        right: $currentBetOffset;
+    }
+
+    .dealerChip {
+        position: absolute;
+        left: -30px;
+    }
 }
+
+@mixin bottom-row {
+    bottom: 0;
+
+    .hand {
+        top: -25px;
+        left: 20%;
+
+        &.userHand {
+            top: $handVerticalOffset;
+            left: -3px;
+        }
+    }
+
+    .currentBet {
+        top: 0;
+    }
+
+    .dealerChip {
+        top: 0;
+    }
+}
+
+@mixin top-row {
+    top: 0;
+
+    .hand {
+        left: 20%;
+        bottom: -25px;
+
+        &.userHand {
+            bottom: $handVerticalOffset;
+            left: -3px;
+        }
+    }
+
+    .currentBet {
+        bottom: 0;
+    }
+
+    .dealerChip {
+        bottom: 0;
+    }
+}
+
+@mixin left-col {
+    left: 0;
+
+    .hand {
+        right: -45px;
+
+        &.userHand {
+            right: $handHorizontalOffset;
+        }
+    }
+
+    .dealerChip {
+        right: 5px;
+        left: unset;
+    }
+}
+
+@mixin right-col {
+    right: 0;
+
+    .hand {
+        left: -45px;
+
+        &.userHand {
+            left: $handHorizontalOffset;
+        }
+    }
+
+    .currentBet {
+        left: $currentBetOffset;
+        text-align: right;
+    }
+
+    .dealerChip {
+        left: 5px;
+    }
+}
+
+$colHandOffset: 5%;
+$colBetVerticalOffset: -25px;
+$colDealerChipVerticalOffset: -28px;
 
 .player-0 {
     right: 15.3%;
-    bottom: 0;
+    @include bottom-row;
 }
 
 .player-1 {
     right: calc(27.6% + 75px);
-    bottom: 0;
+    @include bottom-row;
 }
 
 .player-2 {
     left: calc(27.6% + 75px);
-    bottom: 0;
+    @include bottom-row;
 }
 
 .player-3 {
     left: 15.3%;
-    bottom: 0;
+    @include bottom-row;
 }
 
 .player-4 {
-    left: 0;
+    @include left-col;
     bottom: 20%;
+    .hand {
+        top: $colHandOffset;
+        &.userHand {
+            top: 0;
+        }
+    }
+
+    .currentBet {
+        top: $colBetVerticalOffset;
+    }
+
+    .dealerChip {
+        top: $colDealerChipVerticalOffset;
+    }
 }
 
 .player-5 {
-    left: 0;
+    @include left-col;
     top: 20%;
+
+    .hand {
+        bottom: $colHandOffset;
+        &.userHand {
+            bottom: 0;
+        }
+    }
+
+    .currentBet {
+        bottom: $colBetVerticalOffset;
+    }
+
+    .dealerChip {
+        bottom: $colDealerChipVerticalOffset;
+    }
 }
 
 .player-6 {
     left: 15.3%;
-    top: 0;
+    @include top-row;
 }
 
 .player-7 {
     left: calc(27.6% + 75px);
-    top: 0;
+    @include top-row;
 }
 
 .player-8 {
     right: calc(27.6% + 75px);
-    top: 0;
+    @include top-row;
 }
 
 .player-9 {
     right: 15.3%;
-    top: 0;
+    @include top-row;
 }
 
 .player-10 {
-    right: 0;
     top: 20%;
+    @include right-col;
+
+    .hand {
+        bottom: $colHandOffset;
+        &.userHand {
+            bottom: 0;
+        }
+    }
+
+    .currentBet {
+        bottom: $colBetVerticalOffset;
+    }
+
+    .dealerChip {
+        bottom: $colDealerChipVerticalOffset;
+    }
 }
 
 .player-11 {
-    right: 0;
     bottom: 20%;
+    @include right-col;
+
+    .hand {
+        top: $colHandOffset;
+        &.userHand {
+            top: 0;
+        }
+    }
+
+    .currentBet {
+        top: $colBetVerticalOffset;
+    }
+
+    .dealerChip {
+        top: $colDealerChipVerticalOffset;
+    }
 }
 </style>
