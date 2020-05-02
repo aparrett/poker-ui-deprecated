@@ -43,7 +43,7 @@
                                 <div class="card">{{ game.hand[0] }}</div>
                                 <div class="card">{{ game.hand[1] }}</div>
                             </div>
-                            <div v-else-if="player.hand" class="hand">Hand</div>
+                            <div v-else-if="player.hand && player.hand.length > 0" class="hand">Hand</div>
                         </div>
 
                         <v-row class="d-flex justify-sm-center align-center" style="height: 100%;">
