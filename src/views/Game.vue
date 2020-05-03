@@ -3,12 +3,6 @@
         <v-container>
             <div v-if="game">
                 <v-row>
-                    <v-col sm="4">
-                        <v-row>Game: {{ game.name || game._id }}</v-row>
-                        <v-row> Player Count: {{ `${game.players.length} / ${game.maxPlayers} ` }} </v-row>
-                        <v-row>Max Buy-in: {{ game.maxBuyIn }}</v-row>
-                        <v-row>Current Big Blind: {{ game.bigBlind }}</v-row>
-                    </v-col>
                     <v-col sm="8">
                         <div v-if="isTurn">
                             <v-btn v-if="canCall" rounded color="primary" @click="handleCallClick">Call</v-btn>
@@ -57,7 +51,10 @@
                 </v-row>
                 <v-row>
                     <v-btn v-if="!userPlayer" rounded color="primary" @click="showJoinGameDialog = true">Sit</v-btn>
-                    <v-btn v-else rounded color="primary" @click="handleLeaveClick">Leave</v-btn>
+
+                    <v-btn v-else rounded prepend-icon="arrow-back" style="margin-top: -50px;" @click="handleLeaveClick"
+                        ><v-icon left>arrow_back</v-icon>Leave</v-btn
+                    >
                 </v-row>
             </div>
             <div v-else>Loading Game...</div>
@@ -304,10 +301,25 @@ $handHorizontalOffset: -($cardWidth * 2) - 5px;
 $currentBetWidth: 70px;
 $currentBetOffset: -($currentBetWidth + 7px);
 
+.theme--light.v-application {
+    color: #fff;
+}
+
+body {
+    background-image: url('/images/backgrounds/random_grey_variations.png');
+    background-repeat: repeat;
+}
+
+#app {
+    background: none;
+}
+
 #table {
     height: 500px;
     position: relative;
     width: 900px;
+    background-image: url('/images/poker-table-2-sm.png');
+    background-size: 900px 500px;
 }
 .community-container {
     width: 280px;
@@ -318,7 +330,7 @@ $currentBetOffset: -($currentBetWidth + 7px);
 }
 
 .card {
-    border: 1px solid black;
+    border: 1px solid #fff;
     height: $cardHeight;
     width: $cardWidth;
     padding: 8px;
@@ -333,7 +345,7 @@ $currentBetOffset: -($currentBetWidth + 7px);
     position: absolute;
     height: 100px;
     width: 75px;
-    border: 1px solid black;
+    border: 1px solid #fff;
 
     &.acting {
         border: 4px solid blue;
