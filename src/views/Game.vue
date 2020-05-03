@@ -34,27 +34,39 @@
                                 v-if="game.hand && game.hand.length > 0 && userPlayer && userPlayer._id === player._id"
                                 class="hand userHand"
                             >
-                                <div class="card">{{ game.hand[0] }}</div>
-                                <div class="card">{{ game.hand[1] }}</div>
+                                <div
+                                    class="card"
+                                    :style="`background-image: url('/images/cards/${game.hand[0]}.svg');`"
+                                />
+                                <div
+                                    class="card"
+                                    :style="`background-image: url('/images/cards/${game.hand[1]}.svg');`"
+                                />
                             </div>
-                            <div v-else-if="player.hand && player.hand.length > 0" class="hand">Hand</div>
+                            <div v-else-if="player.hand && player.hand.length > 0" class="hand">
+                                <div class="cardBack"></div>
+                                <div class="cardBack"></div>
+                            </div>
                         </div>
 
                         <v-row class="d-flex justify-sm-center align-center" style="height: 100%;">
                             <div class="d-flex community-container">
-                                <div class="card" v-for="card in game.communityCards" :key="card">
-                                    {{ card }}
-                                </div>
+                                <div
+                                    class="card"
+                                    v-for="card in game.communityCards"
+                                    :key="card"
+                                    :style="`background-image: url('/images/cards/${card}.svg');`"
+                                />
                             </div>
                         </v-row>
-                    </div>
-                </v-row>
-                <v-row>
-                    <v-btn v-if="!userPlayer" rounded color="primary" @click="showJoinGameDialog = true">Sit</v-btn>
 
-                    <v-btn v-else rounded prepend-icon="arrow-back" style="margin-top: -50px;" @click="handleLeaveClick"
-                        ><v-icon left>arrow_back</v-icon>Leave</v-btn
-                    >
+                        <v-btn v-if="!userPlayer" rounded class="sitOrLeaveBtn" @click="showJoinGameDialog = true"
+                            >Sit</v-btn
+                        >
+                        <v-btn v-else rounded prepend-icon="arrow-back" class="sitOrLeaveBtn" @click="handleLeaveClick"
+                            ><v-icon left>arrow_back</v-icon>Leave</v-btn
+                        >
+                    </div>
                 </v-row>
             </div>
             <div v-else>Loading Game...</div>
@@ -293,10 +305,14 @@ export default {
 </script>
 
 <style lang="scss">
-$cardWidth: 40px;
-$cardHeight: 60px;
-$handVerticalOffset: -($cardHeight) - 5px;
-$handHorizontalOffset: -($cardWidth * 2) - 5px;
+$userCardWidth: 40px;
+$userCardHeight: 53px;
+$userHandVerticalOffset: -($userCardHeight) - 5px;
+$userHandHorizontalOffset: -($userCardWidth * 2) - 5px;
+
+$playerCardHeight: 30px;
+$playerCardWidth: 20px;
+$playerHandVerticalOffset: -($playerCardHeight + 5px);
 
 $currentBetWidth: 70px;
 $currentBetOffset: -($currentBetWidth + 7px);
@@ -321,23 +337,41 @@ body {
     background-image: url('/images/poker-table-2-sm.png');
     background-size: 900px 500px;
 }
+
+.sitOrLeaveBtn {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
 .community-container {
-    width: 280px;
+    width: 430px;
+
+    .card {
+        height: 95px;
+        width: 70px;
+    }
 
     .card + .card {
         margin-left: 20px;
     }
 }
 
-.card {
-    border: 1px solid #fff;
-    height: $cardHeight;
-    width: $cardWidth;
-    padding: 8px;
+.cardBack {
+    background-image: url(/images/card-back.png);
+    height: $playerCardHeight;
+    width: $playerCardWidth;
+    background-size: contain;
+    display: inline-block;
 }
 
 .userHand {
-    width: ($cardWidth * 2);
+    width: ($userCardWidth * 2);
+
+    .card {
+        height: $userCardHeight;
+        width: $userCardWidth;
+    }
 }
 
 .player {
@@ -353,6 +387,7 @@ body {
 
     .hand {
         position: absolute;
+        height: $playerCardHeight;
 
         &.userHand {
             .card {
@@ -391,11 +426,11 @@ body {
     bottom: 0;
 
     .hand {
-        top: -25px;
+        top: $playerHandVerticalOffset;
         left: 20%;
 
         &.userHand {
-            top: $handVerticalOffset;
+            top: $userHandVerticalOffset;
             left: -3px;
         }
     }
@@ -414,10 +449,10 @@ body {
 
     .hand {
         left: 20%;
-        bottom: -25px;
+        bottom: $playerHandVerticalOffset;
 
         &.userHand {
-            bottom: $handVerticalOffset;
+            bottom: $userHandVerticalOffset;
             left: -3px;
         }
     }
@@ -438,7 +473,7 @@ body {
         right: -45px;
 
         &.userHand {
-            right: $handHorizontalOffset;
+            right: $userHandHorizontalOffset;
         }
     }
 
@@ -455,7 +490,7 @@ body {
         left: -45px;
 
         &.userHand {
-            left: $handHorizontalOffset;
+            left: $userHandHorizontalOffset;
         }
     }
 
