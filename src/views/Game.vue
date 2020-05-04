@@ -17,13 +17,17 @@
                         <div
                             v-for="(player, index) in game.players"
                             :key="player._id"
-                            :class="`player player-${index} ${player.isTurn ? 'acting' : ''}`"
+                            :class="`player player-${index}`"
                         >
                             <div class="top sub">
-                                <div>{{ player.name }}</div>
-                            </div>
-                            <div class="bottom sub">
                                 <div>${{ player.chips }}</div>
+                            </div>
+                            <div
+                                class="middle"
+                                :style="`background-image: url('/images/avatars/avatar${index}.jpg');`"
+                            />
+                            <div class="bottom sub">
+                                <div :class="`${player.isTurn ? 'acting' : ''}`">{{ player.name }}</div>
                             </div>
 
                             <div v-if="game.bets.find(b => b.playerId === player._id)" class="currentBet">
@@ -374,15 +378,16 @@ body {
     }
 }
 
+$playerHeight: 125px;
+
 .player {
     font-weight: bold;
     position: absolute;
-    height: 100px;
+    height: $playerHeight;
     width: 75px;
-    border: 1px solid #fff;
 
-    &.acting {
-        border: 4px solid blue;
+    .acting {
+        color: #39d839;
     }
 
     .hand {
@@ -400,14 +405,28 @@ body {
         position: absolute;
         text-align: center;
         width: 100%;
+        background-color: #2f135aa1;
     }
 
+    $outerHeight: 25px;
+
     .top {
+        height: $outerHeight;
         top: 0;
+        border-radius: 5px 5px 0 0;
     }
 
     .bottom {
+        height: $outerHeight;
         bottom: 0;
+        border-radius: 0 0 5px 5px;
+    }
+
+    .middle {
+        width: 100%;
+        position: absolute;
+        top: $outerHeight;
+        height: $playerHeight - (2 * $outerHeight);
     }
 
     .currentBet {
@@ -530,7 +549,7 @@ $colDealerChipVerticalOffset: -28px;
 
 .player-4 {
     @include left-col;
-    bottom: 20%;
+    bottom: 17%;
     .hand {
         top: $colHandOffset;
         &.userHand {
@@ -549,7 +568,7 @@ $colDealerChipVerticalOffset: -28px;
 
 .player-5 {
     @include left-col;
-    top: 20%;
+    top: 17%;
 
     .hand {
         bottom: $colHandOffset;
@@ -588,7 +607,7 @@ $colDealerChipVerticalOffset: -28px;
 }
 
 .player-10 {
-    top: 20%;
+    top: 17%;
     @include right-col;
 
     .hand {
@@ -608,7 +627,7 @@ $colDealerChipVerticalOffset: -28px;
 }
 
 .player-11 {
-    bottom: 20%;
+    bottom: 17%;
     @include right-col;
 
     .hand {
