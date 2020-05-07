@@ -30,7 +30,7 @@
                                 <div :class="`${player.isTurn ? 'acting' : ''}`">{{ player.name }}</div>
                             </div>
 
-                            <div v-if="player.isDealer" class="dealerChip">(D)</div>
+                            <div v-if="player.isDealer" class="dealerChip">D</div>
                             <div
                                 v-if="game.hand && game.hand.length > 0 && userPlayer && userPlayer._id === player._id"
                                 class="hand userHand"
@@ -45,8 +45,8 @@
                                 />
                             </div>
                             <div v-else-if="player.hand && player.hand.length > 0" class="hand">
-                                <div class="cardBack"></div>
-                                <div class="cardBack"></div>
+                                <div class="cardBack" />
+                                <div class="cardBack" />
                             </div>
                             <div v-if="game.bets.find(b => b.playerId === player._id)" class="currentBet">
                                 ${{ game.bets.find(b => b.playerId === player._id).amount }}
@@ -385,6 +385,19 @@ body {
     }
 }
 
+.dealerChip {
+    background-image: url('/images/chips/black-chip.png');
+    background-size: cover;
+    width: 20px;
+    height: 20px;
+
+    /* style the letter D until we get a real dealer chip */
+    text-align: center;
+    font-size: 14px;
+    padding-left: 1px;
+    color: #e8e8e8;
+}
+
 .player {
     font-weight: bold;
     position: absolute;
@@ -410,7 +423,7 @@ body {
         position: absolute;
         text-align: center;
         width: 100%;
-        background-color: #2f135aa1;
+        background-color: #000;
     }
 
     $outerHeight: 25px;
@@ -511,7 +524,7 @@ body {
     }
 
     .dealerChip {
-        right: 5px;
+        right: -25px;
         left: unset;
     }
 }
@@ -532,14 +545,14 @@ body {
     }
 
     .dealerChip {
-        left: 5px;
+        left: -25px;
     }
 }
 
 $colHandOffset: 5%;
-$colBetVerticalOffset: -50px;
+$colBetVerticalOffset: -30px;
 $colBetHorizontalOffset: 50px;
-$colDealerChipVerticalOffset: -28px;
+$colDealerChipVerticalOffset: 60px;
 
 .player-0 {
     right: $tablePadding;
