@@ -30,9 +30,6 @@
                                 <div :class="`${player.isTurn ? 'acting' : ''}`">{{ player.name }}</div>
                             </div>
 
-                            <div v-if="game.bets.find(b => b.playerId === player._id)" class="currentBet">
-                                ${{ game.bets.find(b => b.playerId === player._id).amount }}
-                            </div>
                             <div v-if="player.isDealer" class="dealerChip">(D)</div>
                             <div
                                 v-if="game.hand && game.hand.length > 0 && userPlayer && userPlayer._id === player._id"
@@ -50,6 +47,9 @@
                             <div v-else-if="player.hand && player.hand.length > 0" class="hand">
                                 <div class="cardBack"></div>
                                 <div class="cardBack"></div>
+                            </div>
+                            <div v-if="game.bets.find(b => b.playerId === player._id)" class="currentBet">
+                                ${{ game.bets.find(b => b.playerId === player._id).amount }}
                             </div>
                         </div>
 
@@ -314,12 +314,18 @@ $userCardHeight: 53px;
 $userHandVerticalOffset: -($userCardHeight) - 5px;
 $userHandHorizontalOffset: -($userCardWidth * 2) - 5px;
 
+$tableWidth: 900px;
+$tablePadding: 160px;
+$playerHeight: 125px;
+$playerWidth: 75px;
+$marginBetweenPlayers: ($tableWidth - (2 * $tablePadding) - (4 * $playerWidth)) / 3;
+
 $playerCardHeight: 30px;
 $playerCardWidth: 20px;
 $playerHandVerticalOffset: -($playerCardHeight + 5px);
 
 $currentBetWidth: 70px;
-$currentBetOffset: -($currentBetWidth + 7px);
+$currentBetOffset: -($currentBetWidth - 15px);
 
 .theme--light.v-application {
     color: #fff;
@@ -335,11 +341,12 @@ body {
 }
 
 #table {
-    height: 500px;
+    height: 560px;
     position: relative;
-    width: 900px;
+    width: $tableWidth;
     background-image: url('/images/poker-table-2-sm.png');
     background-size: 900px 500px;
+    background-position: center;
 }
 
 .sitOrLeaveBtn {
@@ -378,13 +385,11 @@ body {
     }
 }
 
-$playerHeight: 125px;
-
 .player {
     font-weight: bold;
     position: absolute;
     height: $playerHeight;
-    width: 75px;
+    width: $playerWidth;
 
     .acting {
         color: #39d839;
@@ -432,7 +437,6 @@ $playerHeight: 125px;
     .currentBet {
         position: absolute;
         width: $currentBetWidth;
-        right: $currentBetOffset;
     }
 
     .dealerChip {
@@ -455,7 +459,12 @@ $playerHeight: 125px;
     }
 
     .currentBet {
-        top: 0;
+        top: -30px;
+        right: $currentBetOffset;
+    }
+
+    .hand.userHand + .currentBet {
+        right: -80px;
     }
 
     .dealerChip {
@@ -477,7 +486,12 @@ $playerHeight: 125px;
     }
 
     .currentBet {
-        bottom: 0;
+        bottom: -30px;
+        right: $currentBetOffset;
+    }
+
+    .hand.userHand + .currentBet {
+        right: -80px;
     }
 
     .dealerChip {
@@ -486,7 +500,7 @@ $playerHeight: 125px;
 }
 
 @mixin left-col {
-    left: 0;
+    left: 20px;
 
     .hand {
         right: -45px;
@@ -503,7 +517,7 @@ $playerHeight: 125px;
 }
 
 @mixin right-col {
-    right: 0;
+    right: 20px;
 
     .hand {
         left: -45px;
@@ -514,7 +528,6 @@ $playerHeight: 125px;
     }
 
     .currentBet {
-        left: $currentBetOffset;
         text-align: right;
     }
 
@@ -524,26 +537,27 @@ $playerHeight: 125px;
 }
 
 $colHandOffset: 5%;
-$colBetVerticalOffset: -25px;
+$colBetVerticalOffset: -50px;
+$colBetHorizontalOffset: 50px;
 $colDealerChipVerticalOffset: -28px;
 
 .player-0 {
-    right: 15.3%;
+    right: $tablePadding;
     @include bottom-row;
 }
 
 .player-1 {
-    right: calc(27.6% + 75px);
+    right: $tablePadding + $playerWidth + $marginBetweenPlayers;
     @include bottom-row;
 }
 
 .player-2 {
-    left: calc(27.6% + 75px);
+    left: $tablePadding + $playerWidth + $marginBetweenPlayers;
     @include bottom-row;
 }
 
 .player-3 {
-    left: 15.3%;
+    left: $tablePadding;
     @include bottom-row;
 }
 
@@ -559,6 +573,7 @@ $colDealerChipVerticalOffset: -28px;
 
     .currentBet {
         top: $colBetVerticalOffset;
+        left: $colBetHorizontalOffset;
     }
 
     .dealerChip {
@@ -579,6 +594,7 @@ $colDealerChipVerticalOffset: -28px;
 
     .currentBet {
         bottom: $colBetVerticalOffset;
+        left: $colBetHorizontalOffset;
     }
 
     .dealerChip {
@@ -587,22 +603,22 @@ $colDealerChipVerticalOffset: -28px;
 }
 
 .player-6 {
-    left: 15.3%;
+    left: $tablePadding;
     @include top-row;
 }
 
 .player-7 {
-    left: calc(27.6% + 75px);
+    left: $tablePadding + $playerWidth + $marginBetweenPlayers;
     @include top-row;
 }
 
 .player-8 {
-    right: calc(27.6% + 75px);
+    right: $tablePadding + $playerWidth + $marginBetweenPlayers;
     @include top-row;
 }
 
 .player-9 {
-    right: 15.3%;
+    right: $tablePadding;
     @include top-row;
 }
 
@@ -619,6 +635,7 @@ $colDealerChipVerticalOffset: -28px;
 
     .currentBet {
         bottom: $colBetVerticalOffset;
+        right: $colBetHorizontalOffset;
     }
 
     .dealerChip {
@@ -639,6 +656,7 @@ $colDealerChipVerticalOffset: -28px;
 
     .currentBet {
         top: $colBetVerticalOffset;
+        right: $colBetHorizontalOffset;
     }
 
     .dealerChip {
