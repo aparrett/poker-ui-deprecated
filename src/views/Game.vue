@@ -4,12 +4,10 @@
             <div v-if="game">
                 <v-row style="justify-content: center;">
                     <div id="table">
-                        <v-btn v-if="!userPlayer" rounded class="sitOrLeaveBtn" @click="showJoinGameDialog = true"
-                            >Sit</v-btn
-                        >
-                        <v-btn v-else small prepend-icon="arrow-back" class="sitOrLeaveBtn" @click="handleLeaveClick"
+                        <v-btn small class="leave-btn" @click="handleLeaveClick"
                             ><v-icon left>arrow_back</v-icon>Leave</v-btn
                         >
+                        <v-btn small v-if="!userPlayer" class="sit-btn" @click="showJoinGameDialog = true">Sit</v-btn>
                         <div
                             v-for="(player, index) in game.players"
                             :key="player._id"
@@ -178,8 +176,13 @@ export default {
             }
         },
         async handleLeaveClick() {
+            if (!this.userPlayer) {
+                return this.$router.push('/')
+            }
+
             try {
                 await leaveTable(this.game._id)
+                this.$router.push('/')
             } catch (e) {
                 const { status, data } = e.response
                 if (status === 401) {
@@ -326,15 +329,6 @@ $currentBetOffset: -($currentBetWidth - 15px);
     color: #fff;
 }
 
-body {
-    background-image: url('/images/backgrounds/random_grey_variations.png');
-    background-repeat: repeat;
-}
-
-#app {
-    background: none;
-}
-
 #table {
     height: 560px;
     position: relative;
@@ -344,9 +338,15 @@ body {
     background-position: center;
 }
 
-.sitOrLeaveBtn {
+.leave-btn {
     position: absolute;
     top: 0;
+    left: 20px;
+}
+
+.sit-btn {
+    position: absolute;
+    top: 40px;
     left: 20px;
 }
 
@@ -400,7 +400,7 @@ body {
     width: $playerWidth;
 
     .acting {
-        color: #39d839;
+        color: #2eaf2e;
     }
 
     .hand {

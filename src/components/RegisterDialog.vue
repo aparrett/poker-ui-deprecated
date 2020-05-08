@@ -1,15 +1,13 @@
 <template>
     <div>
-        <v-btn color="white" @click.stop="showDialog = true" text>
+        <v-btn @click.stop="showDialog = true" small class="mt-2 mr-4">
             Register
         </v-btn>
-        <v-dialog v-model="showDialog" persistent max-width="290">
-            <v-card class="elevation-12">
-                <v-toolbar color="primary" dark flat>
-                    <v-toolbar-title>Register</v-toolbar-title>
-                </v-toolbar>
+        <v-dialog v-model="showDialog" dark persistent max-width="290">
+            <v-card class="elevation-0">
                 <v-card-text>
                     <v-form v-model="valid" ref="form">
+                        <h1 class="mb-4">Register</h1>
                         <v-text-field
                             label="Name"
                             name="name"
@@ -41,8 +39,8 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn text @click="showDialog = false">Cancel</v-btn>
-                    <v-btn text color="primary" @click="submit">Register</v-btn>
+                    <v-btn light @click="showDialog = false">Cancel</v-btn>
+                    <v-btn light @click="submit">Register</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>

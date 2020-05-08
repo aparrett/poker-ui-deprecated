@@ -1,12 +1,10 @@
 <template>
     <div>
-        <v-dialog v-model="showDialog" persistent max-width="290">
-            <v-card class="elevation-12">
-                <v-toolbar color="primary" dark flat>
-                    <v-toolbar-title>Create Game</v-toolbar-title>
-                </v-toolbar>
+        <v-dialog v-model="showDialog" dark persistent max-width="290">
+            <v-card class="elevation-0">
                 <v-card-text>
                     <v-form v-model="valid" ref="form">
+                        <h1 class="mb-3">Create Game</h1>
                         <v-text-field label="Name" name="name" v-model="name" type="text" :rules="nameRules" />
                         <v-text-field
                             id="maxPlayers"
@@ -41,8 +39,8 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn text @click="closeDialog">Cancel</v-btn>
-                    <v-btn text color="primary" @click="submit">Create</v-btn>
+                    <v-btn light @click="closeDialog">Cancel</v-btn>
+                    <v-btn light @click="submit">Create</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>

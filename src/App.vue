@@ -50,14 +50,40 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .v-application a.custom-link {
     color: #fff;
     text-decoration: none;
 }
 
-.v-dialog .v-form {
-    margin-top: 18px;
+body {
+    background-image: url('/images/backgrounds/random_grey_variations.png');
+    background-repeat: repeat;
+}
+
+#app {
+    background: none;
+}
+
+.v-dialog {
+    background-image: linear-gradient(
+        to top,
+        rgb(65, 65, 65),
+        rgb(62, 62, 62),
+        rgb(60, 60, 60),
+        rgb(62, 62, 62),
+        rgb(65, 65, 65)
+    );
+    padding: 24px;
+
+    .v-card__text,
+    .v-card__actions {
+        padding: 0 !important;
+    }
+
+    .v-card {
+        background: none !important;
+    }
 }
 
 .v-btn:not(.v-btn--disabled) {
@@ -83,6 +109,11 @@ export default {
 }
 
 .theme--dark.v-card {
-    background-color: #00862a8f;
+    background-color: #0000008f;
+}
+
+.v-dialog .theme--dark.v-card > .v-card__text,
+.v-dialog .theme--dark.v-card .v-card__subtitle {
+    color: rgb(238, 238, 238);
 }
 </style>

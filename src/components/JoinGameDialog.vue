@@ -1,12 +1,10 @@
 <template>
     <div>
-        <v-dialog v-model="showDialog" persistent max-width="290">
-            <v-card class="elevation-12">
-                <v-toolbar color="primary" dark flat>
-                    <v-toolbar-title>Join Game</v-toolbar-title>
-                </v-toolbar>
+        <v-dialog v-model="showDialog" dark persistent max-width="290">
+            <v-card class="elevation-0">
                 <v-card-text>
                     <v-form v-model="valid" ref="form">
+                        <h1 class="mb-4">Join Game</h1>
                         <div>Max Buy-in: {{ maxBuyIn }}</div>
                         <div>Current Big Blind: {{ bigBlind }}</div>
                         <v-text-field
@@ -22,8 +20,8 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn text @click="closeDialog">Cancel</v-btn>
-                    <v-btn text color="primary" @click="onSubmit">Join</v-btn>
+                    <v-btn light @click="closeDialog">Cancel</v-btn>
+                    <v-btn light @click="onSubmit">Join</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
