@@ -418,7 +418,13 @@ $currentBetOffset: -($currentBetWidth - 15px);
         position: absolute;
         text-align: center;
         width: 100%;
-        background-color: #000;
+
+        &.bottom {
+            background-image: linear-gradient(to top, rgb(25, 25, 25), rgb(35, 35, 35), rgb(45, 45, 45));
+        }
+        &.top {
+            background-image: linear-gradient(to top, rgb(45, 45, 45), rgb(35, 35, 35), rgb(25, 25, 25));
+        }
     }
 
     $outerHeight: 25px;
