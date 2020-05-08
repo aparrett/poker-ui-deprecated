@@ -268,6 +268,14 @@ export default {
         },
         closeRaiseDialog() {
             this.showRaiseDialog = false
+        },
+        addCardAnimation() {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    this.cardFlipAnimations.push(true)
+                    resolve()
+                }, 700)
+            })
         }
     },
     computed: {
@@ -311,10 +319,21 @@ export default {
         }
     },
     watch: {
-        'game.communityCards': function(cards) {
-            setTimeout(() => {
-                this.cardFlipAnimations = new Array(cards.length).fill(true)
-            }, 50)
+        // Add card animations and stagger them for the flop.
+        'game.communityCards': async function(cards, oldCards) {
+            if (oldCards && cards.length === oldCards.length) {
+                return
+            }
+
+            if (cards.length === 3) {
+                await this.addCardAnimation()
+                await this.addCardAnimation()
+                await this.addCardAnimation()
+            } else {
+                setTimeout(() => {
+                    this.cardFlipAnimations = new Array(cards.length).fill(true)
+                }, 50)
+            }
         }
     }
 }
