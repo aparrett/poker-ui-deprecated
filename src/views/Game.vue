@@ -38,7 +38,7 @@
                                     :style="`background-image: url('/images/cards/${game.hand[1]}.svg');`"
                                 />
                             </div>
-                            <div v-else-if="player.hand && player.hand.length > 0" class="hand">
+                            <div v-else-if="player.hand" class="hand">
                                 <div class="cardBack" />
                                 <div class="cardBack" />
                             </div>
@@ -50,11 +50,17 @@
                         <v-row class="d-flex justify-sm-center align-center" style="height: 100%;">
                             <div class="d-flex community-container">
                                 <div
-                                    class="card"
-                                    v-for="card in game.communityCards"
+                                    :class="`card flip-card ${cardFlipAnimations[index] ? 'flipped' : ''}`"
+                                    v-for="(card, index) in game.communityCards"
                                     :key="card"
-                                    :style="`background-image: url('/images/cards/${card}.svg');`"
-                                />
+                                >
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front" />
+                                        <div class="flip-card-back">
+                                            <img :src="`/images/cards/${card}.svg`" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </v-row>
                     </div>
@@ -70,7 +76,7 @@
 
             <v-snackbar v-model="showSnackbar" :timeout="10000">
                 {{ errorText }}
-                <v-btn color="primary" text @click="showSnackbar = false">Close</v-btn>
+                <v-btn light small @click="showSnackbar = false">Close</v-btn>
             </v-snackbar>
 
             <RaiseDialog
@@ -108,7 +114,8 @@ export default {
             errorText: '',
             showSnackbar: false,
             showJoinGameDialog: false,
-            showRaiseDialog: false
+            showRaiseDialog: false,
+            cardFlipAnimations: []
         }
     },
     components: {
@@ -302,6 +309,13 @@ export default {
             }
             return true
         }
+    },
+    watch: {
+        'game.communityCards': function(cards) {
+            setTimeout(() => {
+                this.cardFlipAnimations = new Array(cards.length).fill(true)
+            }, 50)
+        }
     }
 }
 </script>
@@ -333,7 +347,7 @@ $currentBetOffset: -($currentBetWidth - 15px);
     height: 560px;
     position: relative;
     width: $tableWidth;
-    background-image: url('/images/poker-table-2-sm.png');
+    background-image: url('/images/poker-table.png');
     background-size: 900px 500px;
     background-position: center;
 }
@@ -683,5 +697,44 @@ $colDealerChipVerticalOffset: 60px;
     .v-btn + .v-btn {
         margin-left: 40px;
     }
+}
+
+.flip-card {
+    background-color: transparent;
+    width: 300px;
+    height: 300px;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    background-color: transparent;
+}
+
+.flip-card-front {
+    color: black;
+    background-size: 100%;
+    background-image: url('/images/card-back.png');
+}
+
+.flip-card-back {
+    transform: rotateY(180deg);
 }
 </style>

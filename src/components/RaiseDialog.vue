@@ -1,7 +1,7 @@
 <template>
     <div>
-        <v-dialog v-model="showDialog" persistent max-width="290">
-            <v-card>
+        <v-dialog dark v-model="showDialog" persistent max-width="290">
+            <v-card class="elevation-0">
                 <v-card-text>
                     <v-container>
                         <v-row>
@@ -22,8 +22,8 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn text @click="closeDialog">Cancel</v-btn>
-                    <v-btn text color="primary" @click="onSubmit">Raise</v-btn>
+                    <v-btn light @click="closeDialog">Cancel</v-btn>
+                    <v-btn light @click="onSubmit">Raise</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>

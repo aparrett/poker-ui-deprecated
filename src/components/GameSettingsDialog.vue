@@ -73,7 +73,7 @@ export default {
                 v => (v && parseInt(v) > 0) || 'The max buy-in amount must be greater than 0.',
                 v => Number.isInteger(parseInt(v)) || 'The max buy-in amount must be an integer.',
                 v => (v && parseInt(v) > this.bigBlind) || 'The max buy-in amount must greater than the big blind.',
-                v => (v && parseInt(v) < 10000) || 'The max buy-in cannot be more than 10000.'
+                v => (v && parseInt(v) <= 10000) || 'The max buy-in cannot be more than 10000.'
             ],
             bigBlind: 20,
             bigBlindRules: [

@@ -27,7 +27,7 @@
             <GameSettingsDialog :showDialog="showGameSettingsDialog" :closeDialog="closeDialog" />
             <v-snackbar v-model="showSnackbar" :timeout="5000">
                 {{ errorText }}
-                <v-btn color="primary" text @click="showSnackbar = false">Close</v-btn>
+                <v-btn light small @click="showSnackbar = false">Close</v-btn>
             </v-snackbar>
         </v-container>
     </v-content>
