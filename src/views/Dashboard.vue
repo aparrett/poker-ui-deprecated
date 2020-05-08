@@ -2,10 +2,10 @@
     <v-content>
         <v-container>
             <v-row class="d-flex justify-center mb-6 mt-2">
-                <v-btn rounded color="primary" @click="showGameSettingsDialog = true">Create Game</v-btn>
+                <v-btn @click="showGameSettingsDialog = true">Create Game</v-btn>
             </v-row>
             <v-row v-for="game in games" :key="game._id" class="mb-3">
-                <v-card class="mx-auto" width="600">
+                <v-card class="mx-auto" width="600" dark>
                     <v-row>
                         <v-col cols="10" style="padding-top: 0; padding-bottom: 0;">
                             <v-card-title v-text="game.name || game._id" style="word-break: break-word;">
@@ -19,7 +19,7 @@
                             </v-card-subtitle>
                         </v-col>
                         <v-col cols="2" style="align-items: center; display: flex; padding-top: 0; padding-bottom: 0;">
-                            <v-btn rounded color="primary" :to="`/games/${game._id}`" class="ml-n1">View</v-btn>
+                            <v-btn light :to="`/games/${game._id}`" class="ml-n1">View</v-btn>
                         </v-col>
                     </v-row>
                 </v-card>

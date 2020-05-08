@@ -2,18 +2,14 @@
     <v-content>
         <v-container>
             <div v-if="game">
-                <v-row>
-                    <v-col sm="8">
-                        <div v-if="isTurn">
-                            <v-btn v-if="canCall" rounded color="primary" @click="handleCallClick">Call</v-btn>
-                            <v-btn v-if="canRaise" rounded color="primary" @click="showRaiseDialog = true">Raise</v-btn>
-                            <v-btn v-if="canCheck" rounded color="primary" @click="handleCheckClick">Check</v-btn>
-                            <v-btn rounded color="primary" @click="handleFoldClick">Fold</v-btn>
-                        </div>
-                    </v-col>
-                </v-row>
                 <v-row style="justify-content: center;">
                     <div id="table">
+                        <v-btn v-if="!userPlayer" rounded class="sitOrLeaveBtn" @click="showJoinGameDialog = true"
+                            >Sit</v-btn
+                        >
+                        <v-btn v-else small prepend-icon="arrow-back" class="sitOrLeaveBtn" @click="handleLeaveClick"
+                            ><v-icon left>arrow_back</v-icon>Leave</v-btn
+                        >
                         <div
                             v-for="(player, index) in game.players"
                             :key="player._id"
@@ -63,14 +59,13 @@
                                 />
                             </div>
                         </v-row>
-
-                        <v-btn v-if="!userPlayer" rounded class="sitOrLeaveBtn" @click="showJoinGameDialog = true"
-                            >Sit</v-btn
-                        >
-                        <v-btn v-else rounded prepend-icon="arrow-back" class="sitOrLeaveBtn" @click="handleLeaveClick"
-                            ><v-icon left>arrow_back</v-icon>Leave</v-btn
-                        >
                     </div>
+                </v-row>
+                <v-row class="d-flex justify-center action-btns">
+                    <v-btn large :disabled="!isTurn || !canCall" @click="handleCallClick">Call</v-btn>
+                    <v-btn large :disabled="!isTurn || !canRaise" @click="showRaiseDialog = true">Raise</v-btn>
+                    <v-btn large :disabled="!isTurn || !canCheck" @click="handleCheckClick">Check</v-btn>
+                    <v-btn large @click="handleFoldClick">Fold</v-btn>
                 </v-row>
             </div>
             <div v-else>Loading Game...</div>
@@ -351,8 +346,8 @@ body {
 
 .sitOrLeaveBtn {
     position: absolute;
-    bottom: 0;
-    left: 0;
+    top: 0;
+    left: 20px;
 }
 
 .community-container {
@@ -674,6 +669,13 @@ $colDealerChipVerticalOffset: 60px;
 
     .dealerChip {
         top: $colDealerChipVerticalOffset;
+    }
+}
+
+.action-btns {
+    margin-top: 40px;
+    .v-btn + .v-btn {
+        margin-left: 40px;
     }
 }
 </style>

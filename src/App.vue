@@ -6,8 +6,8 @@
                 <LoginDialog :setUser="setUser" />
                 <RegisterDialog :setUser="setUser" />
             </div>
-            <div class="d-flex mr-4" v-else>
-                <v-btn color="white" @click="logout" text>
+            <div class="d-flex mr-4 mt-2" v-else>
+                <v-btn small @click="logout" text>
                     Logout
                 </v-btn>
             </div>
@@ -58,5 +58,31 @@ export default {
 
 .v-dialog .v-form {
     margin-top: 18px;
+}
+
+.v-btn:not(.v-btn--disabled) {
+    background-image: linear-gradient(
+        to top,
+        rgb(195, 195, 195),
+        rgb(210, 210, 210),
+        rgb(225, 225, 225),
+        rgb(240, 240, 240),
+        rgb(255, 255, 255)
+    );
+}
+
+.v-btn.v-btn--disabled {
+    background-image: linear-gradient(
+        to top,
+        rgb(195, 195, 195, 0.6),
+        rgb(210, 210, 210, 0.6),
+        rgb(225, 225, 225, 0.6),
+        rgb(240, 240, 240, 0.6),
+        rgb(255, 255, 255, 0.6)
+    );
+}
+
+.theme--dark.v-card {
+    background-color: #00862a8f;
 }
 </style>
