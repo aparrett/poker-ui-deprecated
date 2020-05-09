@@ -38,7 +38,7 @@
                                     :style="`background-image: url('/images/cards/${game.hand[1]}.svg');`"
                                 />
                             </div>
-                            <div v-else-if="player.hand" class="hand">
+                            <div v-else-if="!isDealing && player.hand" class="hand">
                                 <div class="card-back" />
                                 <div class="card-back" />
                             </div>
@@ -64,17 +64,19 @@
                             </div>
                         </v-row>
 
-                        <div
-                            v-for="(player, index) in game.players"
-                            :key="'deal-card-0' + player._id"
-                            :class="`deal-card card-back deal-animation-${index}-0`"
-                        />
+                        <div v-if="isDealing">
+                            <div
+                                v-for="(player, index) in game.players"
+                                :key="'deal-card-0' + player._id"
+                                :class="`deal-card card-back deal-animation-${index}-0`"
+                            />
 
-                        <div
-                            v-for="(player, index) in game.players"
-                            :key="'deal-card-1' + player._id"
-                            :class="`deal-card card-back deal-animation-${index}-1`"
-                        />
+                            <div
+                                v-for="(player, index) in game.players"
+                                :key="'deal-card-1' + player._id"
+                                :class="`deal-card card-back deal-animation-${index}-1`"
+                            />
+                        </div>
                     </div>
                 </v-row>
                 <v-row class="d-flex justify-center action-btns">
@@ -128,7 +130,7 @@ export default {
             showJoinGameDialog: false,
             showRaiseDialog: false,
             cardFlipAnimations: [],
-            dealAnimations: []
+            isDealing: false
         }
     },
     components: {
@@ -148,9 +150,19 @@ export default {
             socket.emit('joinGame', this.$route.params.id, this.user)
             socket.on('gameUpdate', game => {
                 if (game) {
-                    this.game = game
+                    // const nextDealer = game.players.find(p => p.isDealer)
+                    // const previousDealer = this.game.players.find(p => p.isDealer)
 
+                    // if (nextDealer) {
+                    //     if (!previousDealer || nextDealer._id !== previousDealer._id) {
+                    //         this.deal()
+                    //     }
+                    // }
+
+                    // deal always for now
                     this.deal()
+
+                    this.game = game
                 } else {
                     this.closeGame()
                 }
@@ -292,7 +304,7 @@ export default {
                 }
             }, 1000)
         },
-        addCardAnimation() {
+        addCommunityCardAnimation() {
             return new Promise(resolve => {
                 setTimeout(() => {
                     this.cardFlipAnimations.push(true)
@@ -301,8 +313,10 @@ export default {
             })
         },
         deal() {
-            this.dealAnimations.push('0a')
-            this.dealAnimations.push('0b')
+            this.isDealing = true
+            setTimeout(() => {
+                this.isDealing = false
+            }, 3000)
         }
     },
     computed: {
@@ -353,9 +367,9 @@ export default {
             }
 
             if (cards.length === 3) {
-                await this.addCardAnimation()
-                await this.addCardAnimation()
-                await this.addCardAnimation()
+                await this.addCommunityCardAnimation()
+                await this.addCommunityCardAnimation()
+                await this.addCommunityCardAnimation()
             } else {
                 setTimeout(() => {
                     this.cardFlipAnimations = new Array(cards.length).fill(true)
@@ -367,558 +381,5 @@ export default {
 </script>
 
 <style lang="scss">
-$userCardWidth: 40px;
-$userCardHeight: 53px;
-$userHandVerticalOffset: -($userCardHeight) - 5px;
-$userHandHorizontalOffset: -($userCardWidth * 2) - 5px;
-
-$tableWidth: 900px;
-$tablePadding: 160px;
-$playerHeight: 125px;
-$playerWidth: 75px;
-$marginBetweenPlayers: ($tableWidth - (2 * $tablePadding) - (4 * $playerWidth)) / 3;
-
-$playerCardHeight: 30px;
-$playerCardWidth: 20px;
-$playerHandVerticalOffset: -($playerCardHeight + 5px);
-
-$currentBetWidth: 70px;
-$currentBetOffset: -($currentBetWidth - 15px);
-
-.theme--light.v-application {
-    color: #fff;
-}
-
-#table {
-    height: 560px;
-    position: relative;
-    width: $tableWidth;
-    background-image: url('/images/poker-table.png');
-    background-size: 900px 500px;
-    background-position: center;
-}
-
-.leave-btn {
-    position: absolute;
-    top: 0;
-    left: 20px;
-}
-
-.sit-btn {
-    position: absolute;
-    top: 40px;
-    left: 20px;
-}
-
-.community-container {
-    width: 430px;
-
-    .card {
-        height: 95px;
-        width: 70px;
-    }
-
-    .card + .card {
-        margin-left: 20px;
-    }
-}
-
-.card-back {
-    background-image: url(/images/card-back.png);
-    height: $playerCardHeight;
-    width: $playerCardWidth;
-    background-size: contain;
-    display: inline-block;
-}
-
-.userHand {
-    width: ($userCardWidth * 2);
-
-    .card {
-        height: $userCardHeight;
-        width: $userCardWidth;
-    }
-}
-
-.dealerChip {
-    background-image: url('/images/chips/black-chip.png');
-    background-size: cover;
-    width: 20px;
-    height: 20px;
-
-    /* style the letter D until we get a real dealer chip */
-    text-align: center;
-    font-size: 14px;
-    padding-left: 1px;
-    color: #e8e8e8;
-}
-
-.player {
-    font-weight: bold;
-    position: absolute;
-    height: $playerHeight;
-    width: $playerWidth;
-
-    .acting {
-        color: #2eaf2e;
-    }
-
-    .hand {
-        position: absolute;
-        height: $playerCardHeight;
-
-        &.userHand {
-            .card {
-                display: inline-block;
-            }
-        }
-    }
-
-    .sub {
-        position: absolute;
-        text-align: center;
-        width: 100%;
-        background-color: #00000066;
-        font-size: 12px;
-        padding-top: 3px;
-    }
-
-    $outerHeight: 25px;
-
-    .top {
-        height: $outerHeight;
-        top: 0;
-        border-radius: 5px 5px 0 0;
-        font-size: 14px;
-        padding-top: 2px;
-    }
-
-    .bottom {
-        height: $outerHeight;
-        bottom: 0;
-        border-radius: 0 0 5px 5px;
-        font-size: 12px;
-        padding-top: 3px;
-    }
-
-    .middle {
-        width: 100%;
-        position: absolute;
-        top: $outerHeight;
-        height: $playerHeight - (2 * $outerHeight);
-    }
-
-    .currentBet {
-        position: absolute;
-        width: $currentBetWidth;
-    }
-
-    .dealerChip {
-        position: absolute;
-        left: -30px;
-    }
-}
-
-@mixin bottom-row {
-    bottom: 0;
-
-    .hand {
-        top: $playerHandVerticalOffset;
-        left: 20%;
-
-        &.userHand {
-            top: $userHandVerticalOffset;
-            left: -3px;
-        }
-    }
-
-    .currentBet {
-        top: -30px;
-        right: $currentBetOffset;
-    }
-
-    .hand.userHand + .currentBet {
-        right: -80px;
-    }
-
-    .dealerChip {
-        top: 0;
-    }
-}
-
-@mixin top-row {
-    top: 0;
-
-    .hand {
-        left: 20%;
-        bottom: $playerHandVerticalOffset;
-
-        &.userHand {
-            bottom: $userHandVerticalOffset;
-            left: -3px;
-        }
-    }
-
-    .currentBet {
-        bottom: -30px;
-        right: $currentBetOffset;
-    }
-
-    .hand.userHand + .currentBet {
-        right: -80px;
-    }
-
-    .dealerChip {
-        bottom: 0;
-    }
-}
-
-@mixin left-col {
-    left: 20px;
-
-    .hand {
-        right: -45px;
-
-        &.userHand {
-            right: $userHandHorizontalOffset;
-        }
-    }
-
-    .dealerChip {
-        right: -25px;
-        left: unset;
-    }
-}
-
-@mixin right-col {
-    right: 20px;
-
-    .hand {
-        left: -45px;
-
-        &.userHand {
-            left: $userHandHorizontalOffset;
-        }
-    }
-
-    .currentBet {
-        text-align: right;
-    }
-
-    .dealerChip {
-        left: -25px;
-    }
-}
-
-$colHandOffset: 5%;
-$colBetVerticalOffset: -30px;
-$colBetHorizontalOffset: 50px;
-$colDealerChipVerticalOffset: 60px;
-
-.player-0 {
-    right: $tablePadding;
-    @include bottom-row;
-}
-
-.player-1 {
-    right: $tablePadding + $playerWidth + $marginBetweenPlayers;
-    @include bottom-row;
-}
-
-.player-2 {
-    left: $tablePadding + $playerWidth + $marginBetweenPlayers;
-    @include bottom-row;
-}
-
-.player-3 {
-    left: $tablePadding;
-    @include bottom-row;
-}
-
-.player-4 {
-    @include left-col;
-    bottom: 17%;
-    .hand {
-        top: $colHandOffset;
-        &.userHand {
-            top: 0;
-        }
-    }
-
-    .currentBet {
-        top: $colBetVerticalOffset;
-        left: $colBetHorizontalOffset;
-    }
-
-    .dealerChip {
-        top: $colDealerChipVerticalOffset;
-    }
-}
-
-.player-5 {
-    @include left-col;
-    top: 17%;
-
-    .hand {
-        bottom: $colHandOffset;
-        &.userHand {
-            bottom: 0;
-        }
-    }
-
-    .currentBet {
-        bottom: $colBetVerticalOffset;
-        left: $colBetHorizontalOffset;
-    }
-
-    .dealerChip {
-        bottom: $colDealerChipVerticalOffset;
-    }
-}
-
-.player-6 {
-    left: $tablePadding;
-    @include top-row;
-}
-
-.player-7 {
-    left: $tablePadding + $playerWidth + $marginBetweenPlayers;
-    @include top-row;
-}
-
-.player-8 {
-    right: $tablePadding + $playerWidth + $marginBetweenPlayers;
-    @include top-row;
-}
-
-.player-9 {
-    right: $tablePadding;
-    @include top-row;
-}
-
-.player-10 {
-    top: 17%;
-    @include right-col;
-
-    .hand {
-        bottom: $colHandOffset;
-        &.userHand {
-            bottom: 0;
-        }
-    }
-
-    .currentBet {
-        bottom: $colBetVerticalOffset;
-        right: $colBetHorizontalOffset;
-    }
-
-    .dealerChip {
-        bottom: $colDealerChipVerticalOffset;
-    }
-}
-
-.player-11 {
-    bottom: 17%;
-    @include right-col;
-
-    .hand {
-        top: $colHandOffset;
-        &.userHand {
-            top: 0;
-        }
-    }
-
-    .currentBet {
-        top: $colBetVerticalOffset;
-        right: $colBetHorizontalOffset;
-    }
-
-    .dealerChip {
-        top: $colDealerChipVerticalOffset;
-    }
-}
-
-.action-btns {
-    margin-top: 40px;
-    .v-btn + .v-btn {
-        margin-left: 40px;
-    }
-}
-
-/* Animate community cards */
-.flip-card {
-    background-color: transparent;
-    width: 300px;
-    height: 300px;
-}
-
-.flip-card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    transition: transform 0.6s;
-    transform-style: preserve-3d;
-}
-
-.flip-card.flipped .flip-card-inner {
-    transform: rotateY(180deg);
-}
-
-.flip-card-front,
-.flip-card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    background-color: transparent;
-}
-
-.flip-card-front {
-    background-size: 100%;
-    background-image: url('/images/card-back.png');
-}
-
-.flip-card-back {
-    transform: rotateY(180deg);
-}
-
-/* Animate dealing */
-.deal-card {
-    position: absolute;
-    left: 445px;
-    top: 200px;
-}
-
-.deal-animation-0-0 {
-    -webkit-animation: deal0 0.5s forwards;
-    animation: deal0 0.5s forwards;
-}
-
-.deal-animation-0-1 {
-    -webkit-animation: deal1 0.5s forwards;
-    animation: deal1 0.5s forwards;
-    animation-delay: 0.75s;
-}
-
-.deal-animation-1-0 {
-    -webkit-animation: deal2 0.5s forwards;
-    animation: deal2 0.5s forwards;
-    animation-delay: 0.25s;
-}
-
-.deal-animation-1-1 {
-    -webkit-animation: deal3 0.5s forwards;
-    animation: deal3 0.5s forwards;
-    animation-delay: 1s;
-}
-
-.deal-animation-2-0 {
-    -webkit-animation: deal4 0.5s forwards;
-    animation: deal4 0.5s forwards;
-    animation-delay: 0.5s;
-}
-
-.deal-animation-2-1 {
-    -webkit-animation: deal5 0.5s forwards;
-    animation: deal5 0.5s forwards;
-    animation-delay: 1.25s;
-}
-
-@-webkit-keyframes deal0 {
-    100% {
-        margin-left: 235px;
-        margin-top: 200px;
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@keyframes deal0 {
-    100% {
-        margin-left: 235px;
-        margin-top: 200px;
-        transform: rotate(360deg);
-    }
-}
-
-@-webkit-keyframes deal1 {
-    100% {
-        margin-left: 255px;
-        margin-top: 200px;
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@keyframes deal1 {
-    100% {
-        margin-left: 255px;
-        margin-top: 200px;
-        transform: rotate(360deg);
-    }
-}
-
-@-webkit-keyframes deal2 {
-    100% {
-        margin-left: 67px;
-        margin-top: 200px;
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@keyframes deal2 {
-    100% {
-        margin-left: 67px;
-        margin-top: 200px;
-        transform: rotate(360deg);
-    }
-}
-
-@-webkit-keyframes deal3 {
-    100% {
-        margin-left: 87px;
-        margin-top: 200px;
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@keyframes deal3 {
-    100% {
-        margin-left: 87px;
-        margin-top: 200px;
-        transform: rotate(360deg);
-    }
-}
-
-@-webkit-keyframes deal4 {
-    100% {
-        margin-left: -101px;
-        margin-top: 200px;
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@keyframes deal4 {
-    100% {
-        margin-left: -101px;
-        margin-top: 200px;
-        transform: rotate(360deg);
-    }
-}
-
-@-webkit-keyframes deal5 {
-    100% {
-        margin-left: -81px;
-        margin-top: 200px;
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@keyframes deal5 {
-    100% {
-        margin-left: -81px;
-        margin-top: 200px;
-        transform: rotate(360deg);
-    }
-}
+@import '../styles/game.scss';
 </style>
