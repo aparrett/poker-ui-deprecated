@@ -416,139 +416,82 @@ $colDealerChipVerticalOffset: 60px;
 }
 
 /* Animate dealing */
+$dealOriginX: 445px;
+$dealOriginY: 200px;
+
 .deal-card {
     position: absolute;
-    left: 445px;
-    top: 200px;
+    left: $dealOriginX;
+    top: $dealOriginY;
 }
 
-.deal-animation-0-0 {
-    -webkit-animation: deal0 0.5s forwards;
-    animation: deal0 0.5s forwards;
-}
+// Positions in relation to the origin
+$dealCardXPositions: 235px, 66px, -102px, -270px;
+$dealCardYPositions: 200px, -70px;
+$dealCardColXPositions: 315px, -345px;
+$dealCardColYPositions: 145px, -16px;
 
-.deal-animation-0-1 {
-    -webkit-animation: deal1 0.5s forwards;
-    animation: deal1 0.5s forwards;
-    animation-delay: 0.75s;
-}
+@for $i from 0 to 12 {
+    .deal-animation-#{$i}-0 {
+        -webkit-animation: deal-#{$i}-0 0.5s forwards;
+        animation: deal-#{$i}-0 0.5s forwards;
+    }
 
-.deal-animation-1-0 {
-    -webkit-animation: deal2 0.5s forwards;
-    animation: deal2 0.5s forwards;
-    animation-delay: 0.25s;
-}
+    .deal-animation-#{$i}-1 {
+        -webkit-animation: deal-#{$i}-1 0.5s forwards;
+        animation: deal-#{$i}-1 0.5s forwards;
+    }
 
-.deal-animation-1-1 {
-    -webkit-animation: deal3 0.5s forwards;
-    animation: deal3 0.5s forwards;
-    animation-delay: 1s;
-}
+    $positionX: null;
+    $positionY: null;
 
-.deal-animation-2-0 {
-    -webkit-animation: deal4 0.5s forwards;
-    animation: deal4 0.5s forwards;
-    animation-delay: 0.5s;
-}
+    @if $i < 4 { // bottom row
+        $positionX: nth($dealCardXPositions, $i + 1);
+        $positionY: nth($dealCardYPositions, 1);
+    } @else if $i < 6 { // left column
+        $positionX: nth($dealCardColXPositions, 2);
+        $positionY: nth($dealCardColYPositions, $i - 3);
+    } @else if $i > 9 { // right column
+        $positionX: nth($dealCardColXPositions, 1);
+        $positionY: nth($dealCardColYPositions, 12 - $i);
+    } @else { // top row
+        $positionX: nth($dealCardXPositions, 9 - $i + 1);
+        $positionY: nth($dealCardYPositions, 2);
+    }
 
-.deal-animation-2-1 {
-    -webkit-animation: deal5 0.5s forwards;
-    animation: deal5 0.5s forwards;
-    animation-delay: 1.25s;
-}
+    @-webkit-keyframes deal-#{$i}-0 {
+        100% {
+            margin-left: $positionX;
+            margin-top: $positionY;
+            -webkit-transform: rotate(360deg);
+        }
+    }
 
-@-webkit-keyframes deal0 {
-    100% {
-        margin-left: 235px;
-        margin-top: 200px;
-        -webkit-transform: rotate(360deg);
+    @keyframes deal-#{$i}-0 {
+        100% {
+            margin-left: $positionX;
+            margin-top: $positionY;
+            transform: rotate(360deg);
+        }
+    }
+
+    @-webkit-keyframes deal-#{$i}-1 {
+        100% {
+            margin-left: $positionX + 20px;
+            margin-top: $positionY;
+            -webkit-transform: rotate(360deg);
+        }
+    }
+
+    @keyframes deal-#{$i}-1 {
+        100% {
+            margin-left: $positionX + 20px;
+            margin-top: $positionY;
+            transform: rotate(360deg);
+        }
     }
 }
 
-@keyframes deal0 {
-    100% {
-        margin-left: 235px;
-        margin-top: 200px;
-        transform: rotate(360deg);
-    }
-}
 
-@-webkit-keyframes deal1 {
-    100% {
-        margin-left: 255px;
-        margin-top: 200px;
-        -webkit-transform: rotate(360deg);
-    }
-}
 
-@keyframes deal1 {
-    100% {
-        margin-left: 255px;
-        margin-top: 200px;
-        transform: rotate(360deg);
-    }
-}
 
-@-webkit-keyframes deal2 {
-    100% {
-        margin-left: 67px;
-        margin-top: 200px;
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@keyframes deal2 {
-    100% {
-        margin-left: 67px;
-        margin-top: 200px;
-        transform: rotate(360deg);
-    }
-}
-
-@-webkit-keyframes deal3 {
-    100% {
-        margin-left: 87px;
-        margin-top: 200px;
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@keyframes deal3 {
-    100% {
-        margin-left: 87px;
-        margin-top: 200px;
-        transform: rotate(360deg);
-    }
-}
-
-@-webkit-keyframes deal4 {
-    100% {
-        margin-left: -101px;
-        margin-top: 200px;
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@keyframes deal4 {
-    100% {
-        margin-left: -101px;
-        margin-top: 200px;
-        transform: rotate(360deg);
-    }
-}
-
-@-webkit-keyframes deal5 {
-    100% {
-        margin-left: -81px;
-        margin-top: 200px;
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@keyframes deal5 {
-    100% {
-        margin-left: -81px;
-        margin-top: 200px;
-        transform: rotate(360deg);
-    }
-}

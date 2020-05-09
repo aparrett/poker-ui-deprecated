@@ -26,7 +26,13 @@
 
                             <div v-if="player.isDealer" class="dealerChip">D</div>
                             <div
-                                v-if="game.hand && game.hand.length > 0 && userPlayer && userPlayer._id === player._id"
+                                v-if="
+                                    !isDealing &&
+                                        game.hand &&
+                                        game.hand.length > 0 &&
+                                        userPlayer &&
+                                        userPlayer._id === player._id
+                                "
                                 class="hand userHand"
                             >
                                 <div
@@ -69,12 +75,17 @@
                                 v-for="(player, index) in game.players"
                                 :key="'deal-card-0' + player._id"
                                 :class="`deal-card card-back deal-animation-${index}-0`"
+                                :style="`animation-delay: ${index * dealAnimationDelay}s;`"
                             />
 
                             <div
                                 v-for="(player, index) in game.players"
                                 :key="'deal-card-1' + player._id"
                                 :class="`deal-card card-back deal-animation-${index}-1`"
+                                :style="
+                                    `animation-delay: ${(game.players.length - 1) * dealAnimationDelay +
+                                        (index + 1) * dealAnimationDelay}s;`
+                                "
                             />
                         </div>
                     </div>
@@ -130,7 +141,8 @@ export default {
             showJoinGameDialog: false,
             showRaiseDialog: false,
             cardFlipAnimations: [],
-            isDealing: false
+            isDealing: false,
+            dealAnimationDelay: 0.25
         }
     },
     components: {
@@ -150,17 +162,14 @@ export default {
             socket.emit('joinGame', this.$route.params.id, this.user)
             socket.on('gameUpdate', game => {
                 if (game) {
-                    // const nextDealer = game.players.find(p => p.isDealer)
-                    // const previousDealer = this.game.players.find(p => p.isDealer)
+                    const nextDealer = game.players.find(p => p.isDealer)
+                    const previousDealer = this.game.players.find(p => p.isDealer)
 
-                    // if (nextDealer) {
-                    //     if (!previousDealer || nextDealer._id !== previousDealer._id) {
-                    //         this.deal()
-                    //     }
-                    // }
-
-                    // deal always for now
-                    this.deal()
+                    if (nextDealer) {
+                        if (!previousDealer || nextDealer._id !== previousDealer._id) {
+                            this.deal(game.players.length)
+                        }
+                    }
 
                     this.game = game
                 } else {
@@ -312,11 +321,14 @@ export default {
                 }, 700)
             })
         },
-        deal() {
+        deal(playerCount) {
             this.isDealing = true
+            const dealAnimationTime = 0.5
+            const timeToDeal = this.dealAnimationDelay * playerCount * 2 + dealAnimationTime
+
             setTimeout(() => {
                 this.isDealing = false
-            }, 3000)
+            }, timeToDeal * 1000)
         }
     },
     computed: {
