@@ -47,12 +47,6 @@
                             </div>
                         </div>
 
-                        <div
-                            v-for="dealAnimation in dealAnimations"
-                            :key="dealAnimation"
-                            :class="`card-back deal-card p-${dealAnimation}`"
-                        ></div>
-
                         <v-row class="d-flex justify-sm-center align-center" style="height: 100%;">
                             <div class="d-flex community-container">
                                 <div
@@ -69,6 +63,18 @@
                                 </div>
                             </div>
                         </v-row>
+
+                        <div
+                            v-for="(player, index) in game.players"
+                            :key="'deal-card-0' + player._id"
+                            :class="`deal-card card-back deal-animation-${index}-0`"
+                        />
+
+                        <div
+                            v-for="(player, index) in game.players"
+                            :key="'deal-card-1' + player._id"
+                            :class="`deal-card card-back deal-animation-${index}-1`"
+                        />
                     </div>
                 </v-row>
                 <v-row class="d-flex justify-center action-btns">
@@ -143,6 +149,7 @@ export default {
             socket.on('gameUpdate', game => {
                 if (game) {
                     this.game = game
+
                     this.deal()
                 } else {
                     this.closeGame()
@@ -784,14 +791,39 @@ $colDealerChipVerticalOffset: 60px;
     top: 200px;
 }
 
-.p-0a {
-    -webkit-animation: deal0 1s forwards;
-    animation: deal0 1s forwards;
+.deal-animation-0-0 {
+    -webkit-animation: deal0 0.5s forwards;
+    animation: deal0 0.5s forwards;
 }
 
-.p-0b {
-    -webkit-animation: deal1 1s forwards;
-    animation: deal1 1s forwards;
+.deal-animation-0-1 {
+    -webkit-animation: deal1 0.5s forwards;
+    animation: deal1 0.5s forwards;
+    animation-delay: 0.75s;
+}
+
+.deal-animation-1-0 {
+    -webkit-animation: deal2 0.5s forwards;
+    animation: deal2 0.5s forwards;
+    animation-delay: 0.25s;
+}
+
+.deal-animation-1-1 {
+    -webkit-animation: deal3 0.5s forwards;
+    animation: deal3 0.5s forwards;
+    animation-delay: 1s;
+}
+
+.deal-animation-2-0 {
+    -webkit-animation: deal4 0.5s forwards;
+    animation: deal4 0.5s forwards;
+    animation-delay: 0.5s;
+}
+
+.deal-animation-2-1 {
+    -webkit-animation: deal5 0.5s forwards;
+    animation: deal5 0.5s forwards;
+    animation-delay: 1.25s;
 }
 
 @-webkit-keyframes deal0 {
@@ -812,7 +844,7 @@ $colDealerChipVerticalOffset: 60px;
 
 @-webkit-keyframes deal1 {
     100% {
-        margin-left: 250px;
+        margin-left: 255px;
         margin-top: 200px;
         -webkit-transform: rotate(360deg);
     }
@@ -821,6 +853,70 @@ $colDealerChipVerticalOffset: 60px;
 @keyframes deal1 {
     100% {
         margin-left: 255px;
+        margin-top: 200px;
+        transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes deal2 {
+    100% {
+        margin-left: 67px;
+        margin-top: 200px;
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes deal2 {
+    100% {
+        margin-left: 67px;
+        margin-top: 200px;
+        transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes deal3 {
+    100% {
+        margin-left: 87px;
+        margin-top: 200px;
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes deal3 {
+    100% {
+        margin-left: 87px;
+        margin-top: 200px;
+        transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes deal4 {
+    100% {
+        margin-left: -101px;
+        margin-top: 200px;
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes deal4 {
+    100% {
+        margin-left: -101px;
+        margin-top: 200px;
+        transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes deal5 {
+    100% {
+        margin-left: -81px;
+        margin-top: 200px;
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes deal5 {
+    100% {
+        margin-left: -81px;
         margin-top: 200px;
         transform: rotate(360deg);
     }
