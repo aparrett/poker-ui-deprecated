@@ -39,13 +39,19 @@
                                 />
                             </div>
                             <div v-else-if="player.hand" class="hand">
-                                <div class="cardBack" />
-                                <div class="cardBack" />
+                                <div class="card-back" />
+                                <div class="card-back" />
                             </div>
                             <div v-if="game.bets.find(b => b.playerId === player._id)" class="currentBet">
                                 ${{ game.bets.find(b => b.playerId === player._id).amount }}
                             </div>
                         </div>
+
+                        <div
+                            v-for="dealAnimation in dealAnimations"
+                            :key="dealAnimation"
+                            :class="`card-back deal-card p-${dealAnimation}`"
+                        ></div>
 
                         <v-row class="d-flex justify-sm-center align-center" style="height: 100%;">
                             <div class="d-flex community-container">
@@ -115,7 +121,8 @@ export default {
             showSnackbar: false,
             showJoinGameDialog: false,
             showRaiseDialog: false,
-            cardFlipAnimations: []
+            cardFlipAnimations: [],
+            dealAnimations: []
         }
     },
     components: {
@@ -128,7 +135,6 @@ export default {
     async created() {
         const socket = io(config.apiBaseUrl)
         this.socket = socket
-        // TODO: if user connects to game they are already connected to, do not associate again and let user know.
 
         try {
             this.game = await getGame(this.$route.params.id)
@@ -137,25 +143,9 @@ export default {
             socket.on('gameUpdate', game => {
                 if (game) {
                     this.game = game
+                    this.deal()
                 } else {
-                    let countdown = 5
-                    const gamePath = this.$router.current.path
-                    this.showSnackbar = true
-                    this.errorText = `The game is over. Redirecting in ${countdown} seconds..`
-                    setInterval(() => {
-                        // If user has already navigated away, abort.
-                        if (this.$router.current.path !== gamePath) {
-                            return
-                        }
-
-                        countdown--
-                        this.errorText = `The game is over. Redirecting in ${countdown} seconds..`
-                        if (countdown === 0) {
-                            this.$router.push({
-                                name: 'dashboard'
-                            })
-                        }
-                    }, 1000)
+                    this.closeGame()
                 }
             })
         } catch (e) {
@@ -275,6 +265,26 @@ export default {
         closeRaiseDialog() {
             this.showRaiseDialog = false
         },
+        closeGame() {
+            let countdown = 5
+            const gamePath = this.$router.current.path
+            this.showSnackbar = true
+            this.errorText = `The game is over. Redirecting in ${countdown} seconds..`
+            setInterval(() => {
+                // If user has already navigated away, abort.
+                if (this.$router.current.path !== gamePath) {
+                    return
+                }
+
+                countdown--
+                this.errorText = `The game is over. Redirecting in ${countdown} seconds..`
+                if (countdown === 0) {
+                    this.$router.push({
+                        name: 'dashboard'
+                    })
+                }
+            }, 1000)
+        },
         addCardAnimation() {
             return new Promise(resolve => {
                 setTimeout(() => {
@@ -282,6 +292,10 @@ export default {
                     resolve()
                 }, 700)
             })
+        },
+        deal() {
+            this.dealAnimations.push('0a')
+            this.dealAnimations.push('0b')
         }
     },
     computed: {
@@ -402,7 +416,7 @@ $currentBetOffset: -($currentBetWidth - 15px);
     }
 }
 
-.cardBack {
+.card-back {
     background-image: url(/images/card-back.png);
     height: $playerCardHeight;
     width: $playerCardWidth;
@@ -724,6 +738,7 @@ $colDealerChipVerticalOffset: 60px;
     }
 }
 
+/* Animate community cards */
 .flip-card {
     background-color: transparent;
     width: 300px;
@@ -754,12 +769,60 @@ $colDealerChipVerticalOffset: 60px;
 }
 
 .flip-card-front {
-    color: black;
     background-size: 100%;
     background-image: url('/images/card-back.png');
 }
 
 .flip-card-back {
     transform: rotateY(180deg);
+}
+
+/* Animate dealing */
+.deal-card {
+    position: absolute;
+    left: 445px;
+    top: 200px;
+}
+
+.p-0a {
+    -webkit-animation: deal0 1s forwards;
+    animation: deal0 1s forwards;
+}
+
+.p-0b {
+    -webkit-animation: deal1 1s forwards;
+    animation: deal1 1s forwards;
+}
+
+@-webkit-keyframes deal0 {
+    100% {
+        margin-left: 235px;
+        margin-top: 200px;
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes deal0 {
+    100% {
+        margin-left: 235px;
+        margin-top: 200px;
+        transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes deal1 {
+    100% {
+        margin-left: 250px;
+        margin-top: 200px;
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes deal1 {
+    100% {
+        margin-left: 255px;
+        margin-top: 200px;
+        transform: rotate(360deg);
+    }
 }
 </style>
