@@ -139,9 +139,15 @@ export default {
                     this.game = game
                 } else {
                     let countdown = 5
+                    const gamePath = this.$router.current.path
                     this.showSnackbar = true
                     this.errorText = `The game is over. Redirecting in ${countdown} seconds..`
                     setInterval(() => {
+                        // If user has already navigated away, abort.
+                        if (this.$router.current.path !== gamePath) {
+                            return
+                        }
+
                         countdown--
                         this.errorText = `The game is over. Redirecting in ${countdown} seconds..`
                         if (countdown === 0) {
@@ -451,13 +457,9 @@ $currentBetOffset: -($currentBetWidth - 15px);
         position: absolute;
         text-align: center;
         width: 100%;
-
-        &.bottom {
-            background-image: linear-gradient(to top, rgb(25, 25, 25), rgb(35, 35, 35), rgb(45, 45, 45));
-        }
-        &.top {
-            background-image: linear-gradient(to top, rgb(45, 45, 45), rgb(35, 35, 35), rgb(25, 25, 25));
-        }
+        background-color: #00000066;
+        font-size: 12px;
+        padding-top: 3px;
     }
 
     $outerHeight: 25px;
@@ -466,12 +468,16 @@ $currentBetOffset: -($currentBetWidth - 15px);
         height: $outerHeight;
         top: 0;
         border-radius: 5px 5px 0 0;
+        font-size: 14px;
+        padding-top: 2px;
     }
 
     .bottom {
         height: $outerHeight;
         bottom: 0;
         border-radius: 0 0 5px 5px;
+        font-size: 12px;
+        padding-top: 3px;
     }
 
     .middle {
