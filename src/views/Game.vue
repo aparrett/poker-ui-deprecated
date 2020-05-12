@@ -7,9 +7,15 @@
                         <v-btn small class="leave-btn" @click="handleLeaveClick"
                             ><v-icon left>arrow_back</v-icon>Leave</v-btn
                         >
-                        <v-btn small v-if="!userPlayer" class="sit-btn" @click="showJoinGameDialog = true">Sit</v-btn>
+                        <v-btn
+                            small
+                            v-if="!user || (!userPlayer && !game.playersWaiting.map(p => p._id).includes(user._id))"
+                            class="sit-btn"
+                            @click="showJoinGameDialog = true"
+                            >Sit</v-btn
+                        >
                         <div
-                            v-for="(player, index) in game.players"
+                            v-for="(player, index) in [...game.players, ...game.playersWaiting]"
                             :key="player._id"
                             :class="`player player-${index}`"
                         >
@@ -90,7 +96,7 @@
                         </div>
                     </div>
                 </v-row>
-                <v-row class="d-flex justify-center action-btns">
+                <v-row v-if="userPlayer" class="d-flex justify-center action-btns">
                     <v-btn large :disabled="!isTurn || !canCall" @click="handleCallClick">Call</v-btn>
                     <v-btn large :disabled="!isTurn || !canRaise" @click="showRaiseDialog = true">Raise</v-btn>
                     <v-btn large :disabled="!isTurn || !canCheck" @click="handleCheckClick">Check</v-btn>
@@ -178,11 +184,14 @@ export default {
             })
         } catch (e) {
             if (e.response.status === 404) {
-                this.errorText = 'Unable to find the specified game.'
+                this.errorText = 'Unable to find the specified game. Redirecting..'
             } else {
-                this.errorText = 'Something went wrong, please try again later.'
+                this.errorText = 'Something went wrong, please try again later. Redirecting'
             }
 
+            setTimeout(() => {
+                this.$router.push('/')
+            }, 5000)
             this.showSnackbar = true
         }
     },
@@ -207,26 +216,12 @@ export default {
             }
         },
         async handleLeaveClick() {
-            if (!this.userPlayer) {
-                return this.$router.push('/')
-            }
+            this.$router.push('/')
 
             try {
                 await leaveTable(this.game._id)
-                this.$router.push('/')
             } catch (e) {
-                const { status, data } = e.response
-                if (status === 401) {
-                    this.errorText = 'You must be logged in to leave the table.'
-                } else if (status === 404) {
-                    this.errorText = 'Unable to find the specified game.'
-                } else if (status === 400) {
-                    this.errorText = data
-                } else {
-                    this.errorText = 'Something went wrong, please try again later.'
-                }
-
-                this.showSnackbar = true
+                console.log(e)
             }
         },
         async handleCallClick() {
