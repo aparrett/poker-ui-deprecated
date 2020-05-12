@@ -94,7 +94,7 @@
                     <v-btn large :disabled="!isTurn || !canCall" @click="handleCallClick">Call</v-btn>
                     <v-btn large :disabled="!isTurn || !canRaise" @click="showRaiseDialog = true">Raise</v-btn>
                     <v-btn large :disabled="!isTurn || !canCheck" @click="handleCheckClick">Check</v-btn>
-                    <v-btn large @click="handleFoldClick">Fold</v-btn>
+                    <v-btn large :disabled="!isTurn" @click="handleFoldClick">Fold</v-btn>
                 </v-row>
             </div>
             <div v-else>Loading Game...</div>
@@ -323,8 +323,7 @@ export default {
         },
         deal(playerCount) {
             this.isDealing = true
-            const dealAnimationTime = 0.5
-            const timeToDeal = this.dealAnimationDelay * playerCount * 2 + dealAnimationTime
+            const timeToDeal = this.dealAnimationDelay * playerCount * 2
 
             setTimeout(() => {
                 this.isDealing = false

@@ -132,6 +132,12 @@ $currentBetOffset: -($currentBetWidth - 15px);
         padding-top: 3px;
     }
 
+    .bottom > div {
+        white-space: nowrap;
+        padding: 0 5px;
+        overflow: hidden;
+    }
+
     .middle {
         width: 100%;
         position: absolute;
