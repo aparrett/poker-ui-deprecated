@@ -7,6 +7,7 @@
                 <RegisterDialog :setUser="setUser" />
             </div>
             <div class="d-flex mr-4 mt-2" v-else>
+                <v-btn class="mr-3" small text>{{ user.name }}</v-btn>
                 <v-btn small @click="logout" text>
                     Logout
                 </v-btn>
