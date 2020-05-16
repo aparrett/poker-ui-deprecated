@@ -11,7 +11,7 @@
                         <div
                             v-for="(player, index) in [...game.players, ...game.playersWaiting]"
                             :key="player._id"
-                            :class="`player player-${index}`"
+                            :class="`player player-${index} ${!player.hand ? 'dim' : ''}`"
                         >
                             <div class="top sub">
                                 <div>${{ player.chips }}</div>
