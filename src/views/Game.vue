@@ -54,7 +54,9 @@
                             </div>
                         </div>
 
-                        <v-row class="d-flex justify-sm-center align-center" style="height: 100%;">
+                        <div v-if="this.middlePot" class="pot d-flex justify-center">${{ this.middlePot }}</div>
+
+                        <v-row class="d-flex justify-center align-center" style="height: 100%;">
                             <div v-if="game.players.length === 1" style="font-weight: bold;">
                                 Waiting for more players to join to start the game.
                             </div>
@@ -325,6 +327,18 @@ export default {
         }
     },
     computed: {
+        middlePot() {
+            return this.game.pot - this.totalBets
+        },
+        hasBets() {
+            return this.game && this.game.bets.length !== 0
+        },
+        totalBets() {
+            if (!this.hasBets) {
+                return 0
+            }
+            return this.game.bets.reduce((acc, bet) => acc + bet.amount, 0)
+        },
         isTurn() {
             return this.userPlayer && this.userPlayer.isTurn
         },
