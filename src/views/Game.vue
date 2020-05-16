@@ -116,6 +116,8 @@
                 :showDialog="showRaiseDialog"
                 :handleSubmit="handleRaise"
                 :chips="userPlayer.chips"
+                :largestBet="largestBet"
+                :playerBet="playerBet"
             />
 
             <JoinGameDialog

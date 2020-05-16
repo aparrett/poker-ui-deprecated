@@ -503,7 +503,7 @@ $dealCardColYPositions: 145px, -16px;
 }
 
 .pot {
-    padding-top: $dealOriginY;
+    margin-top: $dealOriginY;
     position: absolute;
     width: 100%;
     font-weight:bold;
