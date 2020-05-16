@@ -21,7 +21,8 @@
                                 :style="`background-image: url('/images/avatars/avatar${index}.jpg');`"
                             />
                             <div class="bottom sub">
-                                <div :class="`${player.isTurn ? 'acting' : ''}`">{{ player.name }}</div>
+                                <div v-if="player.lastAction && !player.isTurn">{{ player.lastAction }}</div>
+                                <div v-else :class="`${player.isTurn ? 'acting' : ''}`">{{ player.name }}</div>
                             </div>
 
                             <div v-if="player.isDealer" class="dealerChip">D</div>
