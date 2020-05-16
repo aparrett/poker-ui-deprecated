@@ -8,7 +8,7 @@
                             <v-col cols="12">
                                 <v-form v-model="valid" ref="form">
                                     <v-btn small light @click="handleAllInClick">All-In</v-btn>
-                                    <div class="mb-3">Amount to Call: {{ amountToCall }}</div>
+                                    <div class="mt-3">Amount to Call: {{ amountToCall }}</div>
                                     <v-text-field
                                         label="Raise"
                                         v-model.number="raiseAmount"
