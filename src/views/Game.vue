@@ -218,6 +218,7 @@ export default {
             try {
                 await leaveTable(this.game._id)
             } catch (e) {
+                /* eslint-disable no-console */
                 console.log(e)
             }
         },
