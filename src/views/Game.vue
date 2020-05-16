@@ -7,13 +7,7 @@
                         <v-btn small class="leave-btn" @click="handleLeaveClick"
                             ><v-icon left>arrow_back</v-icon>Leave</v-btn
                         >
-                        <v-btn
-                            small
-                            v-if="!user || (!userPlayer && !game.playersWaiting.map(p => p._id).includes(user._id))"
-                            class="sit-btn"
-                            @click="showJoinGameDialog = true"
-                            >Sit</v-btn
-                        >
+                        <v-btn small v-if="showSitButton" class="sit-btn" @click="showJoinGameDialog = true">Sit</v-btn>
                         <div
                             v-for="(player, index) in [...game.players, ...game.playersWaiting]"
                             :key="player._id"
@@ -60,7 +54,10 @@
                         </div>
 
                         <v-row class="d-flex justify-sm-center align-center" style="height: 100%;">
-                            <div class="d-flex community-container">
+                            <div v-if="game.players.length === 1" style="font-weight: bold;">
+                                Waiting for more players to join to start the game.
+                            </div>
+                            <div v-if="game.communityCards.length > 0" class="d-flex community-container">
                                 <div
                                     :class="`card flip-card ${cardFlipAnimations[index] ? 'flipped' : ''}`"
                                     v-for="(card, index) in game.communityCards"
@@ -363,6 +360,22 @@ export default {
                 return false
             }
             return true
+        },
+        showSitButton() {
+            if (!this.game) {
+                return false
+            }
+            if (this.atMaxCapacity) {
+                return false
+            }
+            if (!this.user) {
+                return true
+            }
+
+            return !this.userPlayer && !this.game.playersWaiting.map(p => p._id).includes(this.user._id)
+        },
+        atMaxCapacity() {
+            return this.game && this.game.players.length + this.game.playersWaiting.length === this.game.maxPlayers
         }
     },
     watch: {
