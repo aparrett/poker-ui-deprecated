@@ -25,31 +25,27 @@
                                 <div v-else :class="`${player.isTurn ? 'acting' : ''}`">{{ player.name }}</div>
                             </div>
 
-                            <div v-if="player.isDealer" class="dealerChip">D</div>
+                            <div v-if="player.isDealer" class="dealer-chip">D</div>
+
                             <div
-                                v-if="
-                                    !isDealing &&
-                                        game.hand &&
-                                        game.hand.length > 0 &&
-                                        userPlayer &&
-                                        userPlayer._id === player._id
-                                "
-                                class="hand userHand"
+                                v-if="(allInHand = game.allInHands.find(h => h.playerId === player._id))"
+                                class="hand flipped-hand"
                             >
                                 <div
                                     class="card"
-                                    :style="`background-image: url('/images/cards/${game.hand[0]}.svg');`"
+                                    :style="`background-image: url('/images/cards/${allInHand.hand[0]}.svg');`"
                                 />
                                 <div
                                     class="card"
-                                    :style="`background-image: url('/images/cards/${game.hand[1]}.svg');`"
+                                    :style="`background-image: url('/images/cards/${allInHand.hand[1]}.svg');`"
                                 />
                             </div>
                             <div v-else-if="!isDealing && player.hand" class="hand">
                                 <div class="card-back" />
                                 <div class="card-back" />
                             </div>
-                            <div v-if="game.bets.find(b => b.playerId === player._id)" class="currentBet">
+
+                            <div v-if="game.bets.find(b => b.playerId === player._id)" class="current-bet">
                                 ${{ game.bets.find(b => b.playerId === player._id).amount }}
                             </div>
                         </div>
@@ -99,6 +95,12 @@
                 <v-row v-if="userPlayer" class="d-flex justify-center action-btns">
                     <v-btn large :disabled="!isTurn || !canCall" @click="handleCallClick">Call</v-btn>
                     <v-btn large :disabled="!isTurn || !canRaise" @click="showRaiseDialog = true">Raise</v-btn>
+
+                    <div v-if="!isDealing && game.hand && game.hand.length > 0" class="hand user-hand">
+                        <div class="card" :style="`background-image: url('/images/cards/${game.hand[0]}.svg');`" />
+                        <div class="card" :style="`background-image: url('/images/cards/${game.hand[1]}.svg');`" />
+                    </div>
+
                     <v-btn large :disabled="!isTurn || !canCheck" @click="handleCheckClick">Check</v-btn>
                     <v-btn large :disabled="!isTurn" @click="handleFoldClick">Fold</v-btn>
                 </v-row>

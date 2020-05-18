@@ -1,7 +1,7 @@
 $userCardWidth: 40px;
 $userCardHeight: 53px;
-$userHandVerticalOffset: -($userCardHeight) - 5px;
-$userHandHorizontalOffset: -($userCardWidth * 2) - 5px;
+$flippedHandVerticalOffset: -($userCardHeight) - 5px;
+$flippedHandHorizontalOffset: -($userCardWidth * 2) - 5px;
 
 $tableWidth: 900px;
 $tablePadding: 160px;
@@ -62,7 +62,22 @@ $currentBetOffset: -($currentBetWidth - 15px);
     display: inline-block;
 }
 
-.userHand {
+.user-hand {
+    width: 158px;
+    margin-top: -20px;
+    margin: -20px 30px;
+
+    .card {
+        height: 100px;
+        display: inline-block;
+        width: 74px;
+        &:first-child {
+            margin-right: 10px;
+        }
+    }
+}
+
+.flipped-hand {
     width: ($userCardWidth * 2);
 
     .card {
@@ -71,7 +86,7 @@ $currentBetOffset: -($currentBetWidth - 15px);
     }
 }
 
-.dealerChip {
+.dealer-chip {
     background-image: url('/images/chips/black-chip.png');
     background-size: cover;
     width: 20px;
@@ -98,7 +113,7 @@ $currentBetOffset: -($currentBetWidth - 15px);
         position: absolute;
         height: $playerCardHeight;
 
-        &.userHand {
+        &.flipped-hand {
             .card {
                 display: inline-block;
             }
@@ -145,12 +160,12 @@ $currentBetOffset: -($currentBetWidth - 15px);
         height: $playerHeight - (2 * $outerHeight);
     }
 
-    .currentBet {
+    .current-bet {
         position: absolute;
         width: $currentBetWidth;
     }
 
-    .dealerChip {
+    .dealer-chip {
         position: absolute;
         left: -30px;
     }
@@ -163,22 +178,22 @@ $currentBetOffset: -($currentBetWidth - 15px);
         top: $playerHandVerticalOffset;
         left: 20%;
 
-        &.userHand {
-            top: $userHandVerticalOffset;
+        &.flipped-hand {
+            top: $flippedHandVerticalOffset;
             left: -3px;
         }
     }
 
-    .currentBet {
+    .current-bet {
         top: -30px;
         right: $currentBetOffset;
     }
 
-    .hand.userHand + .currentBet {
-        right: -80px;
+    .hand.flipped-hand + .current-bet {
+        right: -76px;
     }
 
-    .dealerChip {
+    .dealer-chip {
         top: 0;
     }
 }
@@ -190,22 +205,22 @@ $currentBetOffset: -($currentBetWidth - 15px);
         left: 20%;
         bottom: $playerHandVerticalOffset;
 
-        &.userHand {
-            bottom: $userHandVerticalOffset;
+        &.flipped-hand {
+            bottom: $flippedHandVerticalOffset;
             left: -3px;
         }
     }
 
-    .currentBet {
+    .current-bet {
         bottom: -30px;
         right: $currentBetOffset;
     }
 
-    .hand.userHand + .currentBet {
-        right: -80px;
+    .hand.flipped-hand + .current-bet {
+        right: -76px;
     }
 
-    .dealerChip {
+    .dealer-chip {
         bottom: 0;
     }
 }
@@ -216,12 +231,12 @@ $currentBetOffset: -($currentBetWidth - 15px);
     .hand {
         right: -45px;
 
-        &.userHand {
-            right: $userHandHorizontalOffset;
+        &.flipped-hand {
+            right: $flippedHandHorizontalOffset;
         }
     }
 
-    .dealerChip {
+    .dealer-chip {
         right: -25px;
         left: unset;
     }
@@ -233,16 +248,16 @@ $currentBetOffset: -($currentBetWidth - 15px);
     .hand {
         left: -45px;
 
-        &.userHand {
-            left: $userHandHorizontalOffset;
+        &.flipped-hand {
+            left: $flippedHandHorizontalOffset;
         }
     }
 
-    .currentBet {
+    .current-bet {
         text-align: right;
     }
 
-    .dealerChip {
+    .dealer-chip {
         left: -25px;
     }
 }
@@ -277,17 +292,17 @@ $colDealerChipVerticalOffset: 60px;
     bottom: 17%;
     .hand {
         top: $colHandOffset;
-        &.userHand {
+        &.flipped-hand {
             top: 0;
         }
     }
 
-    .currentBet {
+    .current-bet {
         top: $colBetVerticalOffset;
         left: $colBetHorizontalOffset;
     }
 
-    .dealerChip {
+    .dealer-chip {
         top: $colDealerChipVerticalOffset;
     }
 }
@@ -298,17 +313,17 @@ $colDealerChipVerticalOffset: 60px;
 
     .hand {
         bottom: $colHandOffset;
-        &.userHand {
+        &.flipped-hand {
             bottom: 0;
         }
     }
 
-    .currentBet {
+    .current-bet {
         bottom: $colBetVerticalOffset;
         left: $colBetHorizontalOffset;
     }
 
-    .dealerChip {
+    .dealer-chip {
         bottom: $colDealerChipVerticalOffset;
     }
 }
@@ -339,17 +354,17 @@ $colDealerChipVerticalOffset: 60px;
 
     .hand {
         bottom: $colHandOffset;
-        &.userHand {
+        &.flipped-hand {
             bottom: 0;
         }
     }
 
-    .currentBet {
+    .current-bet {
         bottom: $colBetVerticalOffset;
         right: $colBetHorizontalOffset;
     }
 
-    .dealerChip {
+    .dealer-chip {
         bottom: $colDealerChipVerticalOffset;
     }
 }
@@ -360,17 +375,17 @@ $colDealerChipVerticalOffset: 60px;
 
     .hand {
         top: $colHandOffset;
-        &.userHand {
+        &.flipped-hand {
             top: 0;
         }
     }
 
-    .currentBet {
+    .current-bet {
         top: $colBetVerticalOffset;
         right: $colBetHorizontalOffset;
     }
 
-    .dealerChip {
+    .dealer-chip {
         top: $colDealerChipVerticalOffset;
     }
 }
