@@ -54,12 +54,15 @@ $currentBetOffset: -($currentBetWidth - 15px);
     }
 }
 
-.card-back {
-    background-image: url(/images/card-back.png);
+.card-back, .card-front {
     height: $playerCardHeight;
     width: $playerCardWidth;
     background-size: contain;
     display: inline-block;
+}
+
+.card-back {
+    background-image: url("/images/card-back.png");
 }
 
 .user-hand {
@@ -513,6 +516,52 @@ $dealCardColYPositions: 145px, -16px;
     }
 }
 
+/* Animate winners */
+
+// Positions in relation to the origin
+$winnerXPositions: 235px, 66px, -102px, -270px;
+$winnerYPositions: 175px, -41px;
+$winnerColXPositions: 315px, -345px;
+$winnerColYPositions: 120px, 13px;
+
+@for $i from 0 to 12 {
+    .winner-animation-#{$i} {
+        -webkit-animation: winner-#{$i}-0 1.5s forwards;
+        animation: winner-#{$i}-0 1.5s forwards;
+    }
+
+    $positionX: null;
+    $positionY: null;
+
+    @if $i < 4 { // bottom row
+        $positionX: nth($winnerXPositions, $i + 1);
+        $positionY: nth($winnerYPositions, 1);
+    } @else if $i < 6 { // left column
+        $positionX: nth($winnerColXPositions, 2);
+        $positionY: nth($winnerColYPositions, $i - 3);
+    } @else if $i > 9 { // right column
+        $positionX: nth($winnerColXPositions, 1);
+        $positionY: nth($winnerColYPositions, 12 - $i);
+    } @else { // top row
+        $positionX: nth($winnerXPositions, 9 - $i + 1);
+        $positionY: nth($winnerYPositions, 2);
+    }
+
+    @-webkit-keyframes winner-#{$i}-0 {
+        100% {
+            margin-left: $positionX;
+            margin-top: $positionY;
+        }
+    }
+
+    @keyframes winner-#{$i}-0 {
+        100% {
+            margin-left: $positionX;
+            margin-top: $positionY;
+        }
+    }
+}
+
 .dim {
     opacity: .5;
 }
@@ -520,6 +569,13 @@ $dealCardColYPositions: 145px, -16px;
 .pot {
     margin-top: $dealOriginY;
     position: absolute;
+    font-weight:bold;
     width: 100%;
+}
+
+.winner-pot {
+    top: $dealOriginY;
+    left: $dealOriginX;
+    position: absolute;
     font-weight:bold;
 }

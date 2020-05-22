@@ -40,12 +40,30 @@
                                     :style="`background-image: url('/images/cards/${allInHand.hand[1]}.svg');`"
                                 />
                             </div>
-                            <div v-else-if="!isDealing && player.hand" class="hand">
+                            <div v-else-if="!isShowingWinners && !isDealing && player.hand" class="hand">
                                 <div class="card-back" />
                                 <div class="card-back" />
                             </div>
+                            <div
+                                v-else-if="
+                                    (winner = game.winners.find(w => w.playerId === player._id)) && isShowingWinners
+                                "
+                                class="hand"
+                            >
+                                <div
+                                    class="card-front"
+                                    :style="`background-image: url('/images/cards/${winner.hand[0]}.svg');`"
+                                />
+                                <div
+                                    class="card-front"
+                                    :style="`background-image: url('/images/cards/${winner.hand[0]}.svg');`"
+                                />
+                            </div>
 
-                            <div v-if="game.bets.find(b => b.playerId === player._id)" class="current-bet">
+                            <div
+                                v-if="game.bets.find(b => b.playerId === player._id) && !isShowingWinners"
+                                class="current-bet"
+                            >
                                 ${{ game.bets.find(b => b.playerId === player._id).amount }}
                             </div>
                         </div>
@@ -72,17 +90,32 @@
                             </div>
                         </v-row>
 
+                        <div v-if="isShowingWinners">
+                            <div
+                                v-for="(player, index) in game.winners"
+                                :key="index"
+                                :class="
+                                    `winner-pot winner-animation-${game.players.findIndex(
+                                        p => p._id === player.playerId
+                                    )}`
+                                "
+                                :style="`animation-delay: ${index * winnerAnimationDelay}s;`"
+                            >
+                                ${{ player.amount }}
+                            </div>
+                        </div>
+
                         <div v-if="isDealing">
                             <div
                                 v-for="(player, index) in game.players"
-                                :key="'deal-card-0' + player._id"
+                                :key="'deal-card-0-' + player._id"
                                 :class="`deal-card card-back deal-animation-${index}-0`"
                                 :style="`animation-delay: ${index * dealAnimationDelay}s;`"
                             />
 
                             <div
                                 v-for="(player, index) in game.players"
-                                :key="'deal-card-1' + player._id"
+                                :key="'deal-card-1-' + player._id"
                                 :class="`deal-card card-back deal-animation-${index}-1`"
                                 :style="
                                     `animation-delay: ${(game.players.length - 1) * dealAnimationDelay +
@@ -151,7 +184,9 @@ export default {
             showJoinGameDialog: false,
             showRaiseDialog: false,
             cardFlipAnimations: [],
+            isShowingWinners: false,
             isDealing: false,
+            winnerAnimationDelay: 2.5,
             dealAnimationDelay: 0.25
         }
     },
@@ -177,7 +212,7 @@ export default {
 
                     if (nextDealer) {
                         if (!previousDealer || nextDealer._id !== previousDealer._id) {
-                            this.deal(game.players.length)
+                            this.showWinners(game.winners.length, game.players.length)
                         }
                     }
 
@@ -320,6 +355,14 @@ export default {
                     resolve()
                 }, 700)
             })
+        },
+        showWinners(winnerCount, playerCount) {
+            this.isShowingWinners = true
+            const animationTime = this.winnerAnimationDelay * winnerCount
+            setTimeout(() => {
+                this.isShowingWinners = false
+                this.deal(playerCount)
+            }, animationTime * 1000)
         },
         deal(playerCount) {
             this.isDealing = true
