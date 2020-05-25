@@ -46,17 +46,17 @@
                             </div>
                             <div
                                 v-else-if="
-                                    (winner = game.winners.find(w => w.playerId === player._id)) && isShowingWinners
+                                    isShowingWinners && (winner = game.winners.find(w => w.playerId === player._id))
                                 "
-                                class="hand"
+                                class="hand flipped-hand"
                             >
                                 <div
-                                    class="card-front"
+                                    class="card"
                                     :style="`background-image: url('/images/cards/${winner.hand[0]}.svg');`"
                                 />
                                 <div
-                                    class="card-front"
-                                    :style="`background-image: url('/images/cards/${winner.hand[0]}.svg');`"
+                                    class="card"
+                                    :style="`background-image: url('/images/cards/${winner.hand[1]}.svg');`"
                                 />
                             </div>
 
@@ -91,6 +91,9 @@
                         </v-row>
 
                         <div v-if="isShowingWinners">
+                            <div v-if="winningHandType" class="winning-hand-type">{{ winningHandType }}</div>
+
+                            <!-- Show pots being distributed -->
                             <div
                                 v-for="(player, index) in game.winners"
                                 :key="index"
@@ -187,7 +190,8 @@ export default {
             isShowingWinners: false,
             isDealing: false,
             winnerAnimationDelay: 2.5,
-            dealAnimationDelay: 0.25
+            dealAnimationDelay: 0.25,
+            winningHandType: null
         }
     },
     components: {
@@ -212,7 +216,7 @@ export default {
 
                     if (nextDealer) {
                         if (!previousDealer || nextDealer._id !== previousDealer._id) {
-                            this.showWinners(game.winners.length, game.players.length)
+                            this.showWinners(game.winners, game.players.length)
                         }
                     }
 
@@ -356,12 +360,23 @@ export default {
                 }, 700)
             })
         },
-        showWinners(winnerCount, playerCount) {
+        showWinners(winners, playerCount) {
+            // Kicks off winner animations.
             this.isShowingWinners = true
-            const animationTime = this.winnerAnimationDelay * winnerCount
+
+            const animationTime = this.winnerAnimationDelay * winners.length
+
+            // Show hand type while chips are being distributed.
+            winners.forEach((winner, i) => {
+                setTimeout(() => {
+                    this.winningHandType = winner.handType
+                }, 1000 * i * this.winnerAnimationDelay)
+            })
+
             setTimeout(() => {
                 this.isShowingWinners = false
                 this.deal(playerCount)
+                this.winningHandType = null
             }, animationTime * 1000)
         },
         deal(playerCount) {
