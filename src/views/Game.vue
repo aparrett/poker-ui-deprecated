@@ -70,6 +70,7 @@
 
                         <div v-if="this.middlePot" class="pot d-flex justify-center">${{ this.middlePot }}</div>
 
+                        <!-- Show community cards normally -->
                         <v-row class="d-flex justify-center align-center" style="height: 100%;">
                             <div v-if="game.players.length === 1" style="font-weight: bold;">
                                 Waiting for more players to join to start the game.
@@ -78,6 +79,20 @@
                                 <div
                                     :class="`card flip-card ${cardFlipAnimations[index] ? 'flipped' : ''}`"
                                     v-for="(card, index) in game.communityCards"
+                                    :key="card"
+                                >
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front" />
+                                        <div class="flip-card-back">
+                                            <img :src="`/images/cards/${card}.svg`" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else-if="isShowingWinners" class="d-flex community-container">
+                                <div
+                                    class="card flip-card flipped"
+                                    v-for="card in game.previousCommunityCards"
                                     :key="card"
                                 >
                                     <div class="flip-card-inner">
