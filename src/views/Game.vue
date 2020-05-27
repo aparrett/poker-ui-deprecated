@@ -8,141 +8,30 @@
                             ><v-icon left>arrow_back</v-icon>Leave</v-btn
                         >
                         <v-btn small v-if="showSitButton" class="sit-btn" @click="showJoinGameDialog = true">Sit</v-btn>
-                        <div
-                            v-for="(player, index) in [...game.players, ...game.playersWaiting]"
-                            :key="player._id"
-                            :class="`player player-${index} ${!player.hand ? 'dim' : ''}`"
-                        >
-                            <div class="top sub">
-                                <div>${{ player.chips }}</div>
-                            </div>
-                            <div
-                                class="middle"
-                                :style="`background-image: url('/images/avatars/avatar${index}.jpg');`"
-                            />
-                            <div class="bottom sub">
-                                <div v-if="player.lastAction && !player.isTurn">{{ player.lastAction }}</div>
-                                <div v-else :class="`${player.isTurn ? 'acting' : ''}`">{{ player.name }}</div>
-                            </div>
 
-                            <div v-if="player.isDealer" class="dealer-chip">D</div>
-
-                            <div
-                                v-if="(allInHand = game.allInHands.find(h => h.playerId === player._id))"
-                                class="hand flipped-hand"
-                            >
-                                <div
-                                    class="card"
-                                    :style="`background-image: url('/images/cards/${allInHand.hand[0]}.svg');`"
-                                />
-                                <div
-                                    class="card"
-                                    :style="`background-image: url('/images/cards/${allInHand.hand[1]}.svg');`"
-                                />
-                            </div>
-                            <div v-else-if="!isShowingWinners && !isDealing && player.hand" class="hand">
-                                <div class="card-back" />
-                                <div class="card-back" />
-                            </div>
-                            <div
-                                v-else-if="
-                                    isShowingWinners && (winner = game.winners.find(w => w.playerId === player._id))
-                                "
-                                class="hand flipped-hand"
-                            >
-                                <div
-                                    class="card"
-                                    :style="`background-image: url('/images/cards/${winner.hand[0]}.svg');`"
-                                />
-                                <div
-                                    class="card"
-                                    :style="`background-image: url('/images/cards/${winner.hand[1]}.svg');`"
-                                />
-                            </div>
-
-                            <div
-                                v-if="game.bets.find(b => b.playerId === player._id) && !isShowingWinners"
-                                class="current-bet"
-                            >
-                                ${{ game.bets.find(b => b.playerId === player._id).amount }}
-                            </div>
-                        </div>
+                        <Players :game="game" :isDealing="isDealing" :isShowingWinners="isShowingWinners" />
 
                         <div v-if="this.middlePot" class="pot d-flex justify-center">${{ this.middlePot }}</div>
 
-                        <!-- Show community cards normally -->
-                        <v-row class="d-flex justify-center align-center" style="height: 100%;">
-                            <div v-if="game.players.length === 1" style="font-weight: bold;">
-                                Waiting for more players to join to start the game.
-                            </div>
-                            <div v-if="game.communityCards.length > 0" class="d-flex community-container">
-                                <div
-                                    :class="`card flip-card ${cardFlipAnimations[index] ? 'flipped' : ''}`"
-                                    v-for="(card, index) in game.communityCards"
-                                    :key="card"
-                                >
-                                    <div class="flip-card-inner">
-                                        <div class="flip-card-front" />
-                                        <div class="flip-card-back">
-                                            <img :src="`/images/cards/${card}.svg`" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div v-else-if="isShowingWinners" class="d-flex community-container">
-                                <div
-                                    class="card flip-card flipped"
-                                    v-for="card in game.previousCommunityCards"
-                                    :key="card"
-                                >
-                                    <div class="flip-card-inner">
-                                        <div class="flip-card-front" />
-                                        <div class="flip-card-back">
-                                            <img :src="`/images/cards/${card}.svg`" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </v-row>
+                        <CommunityCards
+                            :game="game"
+                            :isShowingWinners="isShowingWinners"
+                            :cardFlipAnimations="cardFlipAnimations"
+                        />
 
                         <div v-if="isShowingWinners">
                             <div v-if="winningHandType" class="winning-hand-type">{{ winningHandType }}</div>
-
-                            <!-- Show pots being distributed -->
-                            <div
-                                v-for="(player, index) in game.winners"
-                                :key="index"
-                                :class="
-                                    `winner-pot winner-animation-${game.players.findIndex(
-                                        p => p._id === player.playerId
-                                    )}`
-                                "
-                                :style="`animation-delay: ${index * winnerAnimationDelay}s;`"
-                            >
-                                ${{ player.amount }}
-                            </div>
+                            <PotAnimations :game="game" :winnerAnimationDelay="winnerAnimationDelay" />
                         </div>
 
-                        <div v-if="isDealing">
-                            <div
-                                v-for="(player, index) in game.players"
-                                :key="'deal-card-0-' + player._id"
-                                :class="`deal-card card-back deal-animation-${index}-0`"
-                                :style="`animation-delay: ${index * dealAnimationDelay}s;`"
-                            />
-
-                            <div
-                                v-for="(player, index) in game.players"
-                                :key="'deal-card-1-' + player._id"
-                                :class="`deal-card card-back deal-animation-${index}-1`"
-                                :style="
-                                    `animation-delay: ${(game.players.length - 1) * dealAnimationDelay +
-                                        (index + 1) * dealAnimationDelay}s;`
-                                "
-                            />
-                        </div>
+                        <DealAnimations
+                            v-if="isDealing"
+                            :players="game.players"
+                            :dealAnimationDelay="dealAnimationDelay"
+                        />
                     </div>
                 </v-row>
+
                 <v-row v-if="userPlayer" class="d-flex justify-center action-btns">
                     <v-btn large :disabled="!isTurn || !canCall" @click="handleCallClick">Call</v-btn>
                     <v-btn large :disabled="!isTurn || !canRaise" @click="showRaiseDialog = true">Raise</v-btn>
@@ -191,6 +80,10 @@ import io from 'socket.io-client'
 import config from '../config'
 import JoinGameDialog from '../components/JoinGameDialog'
 import RaiseDialog from '../components/RaiseDialog'
+import Players from '../components/Players'
+import CommunityCards from '../components/CommunityCards'
+import PotAnimations from '../components/PotAnimations'
+import DealAnimations from '../components/DealAnimations'
 
 export default {
     name: 'Game',
@@ -211,7 +104,11 @@ export default {
     },
     components: {
         JoinGameDialog,
-        RaiseDialog
+        RaiseDialog,
+        Players,
+        CommunityCards,
+        PotAnimations,
+        DealAnimations
     },
     props: {
         user: Object
@@ -388,11 +285,14 @@ export default {
                 }, 1000 * i * this.winnerAnimationDelay)
             })
 
+            // Adding some extra time so that the players can look at the board a little longer.
+            const extraTime = 2000
+
             setTimeout(() => {
                 this.isShowingWinners = false
                 this.deal(playerCount)
                 this.winningHandType = null
-            }, animationTime * 1000)
+            }, animationTime * 1000 + extraTime)
         },
         deal(playerCount) {
             this.isDealing = true
