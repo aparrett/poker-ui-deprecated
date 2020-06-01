@@ -16,7 +16,9 @@
                             :endedByFold="endedByFold"
                         />
 
-                        <div v-if="this.middlePot" class="pot d-flex justify-center">${{ this.middlePot }}</div>
+                        <div v-if="this.middlePot && !isShowingWinners" class="pot d-flex justify-center">
+                            ${{ this.middlePot }}
+                        </div>
 
                         <CommunityCards :game="game" :cardFlipAnimations="cardFlipAnimations" />
 
