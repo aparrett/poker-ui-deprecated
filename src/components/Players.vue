@@ -25,7 +25,9 @@
                 <div class="card-back" />
             </div>
             <div
-                v-else-if="isShowingWinners && (winner = game.winners.find(w => w.playerId === player._id))"
+                v-else-if="
+                    isShowingWinners && !endedByFold && (winner = game.winners.find(w => w.playerId === player._id))
+                "
                 class="hand flipped-hand"
             >
                 <div class="card" :style="`background-image: url('/images/cards/${winner.hand[0]}.svg');`" />
@@ -44,7 +46,8 @@ export default {
     props: {
         game: Object,
         isShowingWinners: Boolean,
-        isDealing: Boolean
+        isDealing: Boolean,
+        endedByFold: Boolean
     }
 }
 </script>

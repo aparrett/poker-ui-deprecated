@@ -9,18 +9,21 @@
                         >
                         <v-btn small v-if="showSitButton" class="sit-btn" @click="showJoinGameDialog = true">Sit</v-btn>
 
-                        <Players :game="game" :isDealing="isDealing" :isShowingWinners="isShowingWinners" />
+                        <Players
+                            :game="game"
+                            :isDealing="isDealing"
+                            :isShowingWinners="isShowingWinners"
+                            :endedByFold="endedByFold"
+                        />
 
                         <div v-if="this.middlePot" class="pot d-flex justify-center">${{ this.middlePot }}</div>
 
-                        <CommunityCards
-                            :game="game"
-                            :isShowingWinners="isShowingWinners"
-                            :cardFlipAnimations="cardFlipAnimations"
-                        />
+                        <CommunityCards :game="game" :cardFlipAnimations="cardFlipAnimations" />
 
                         <div v-if="isShowingWinners">
-                            <div v-if="winningHandType" class="winning-hand-type">{{ winningHandType }}</div>
+                            <div v-if="!endedByFold && winningHandType" class="winning-hand-type">
+                                {{ winningHandType }}
+                            </div>
                             <PotAnimations :game="game" :winnerAnimationDelay="winnerAnimationDelay" />
                         </div>
 
@@ -33,16 +36,22 @@
                 </v-row>
 
                 <v-row v-if="userPlayer" class="d-flex justify-center action-btns">
-                    <v-btn large :disabled="!isTurn || !canCall" @click="handleCallClick">Call</v-btn>
-                    <v-btn large :disabled="!isTurn || !canRaise" @click="showRaiseDialog = true">Raise</v-btn>
+                    <v-btn large :disabled="isShowingWinners || !isTurn || !canCall" @click="handleCallClick"
+                        >Call</v-btn
+                    >
+                    <v-btn large :disabled="isShowingWinners || !isTurn || !canRaise" @click="showRaiseDialog = true"
+                        >Raise</v-btn
+                    >
 
                     <div v-if="!isDealing && game.hand && game.hand.length > 0" class="hand user-hand">
                         <div class="card" :style="`background-image: url('/images/cards/${game.hand[0]}.svg');`" />
                         <div class="card" :style="`background-image: url('/images/cards/${game.hand[1]}.svg');`" />
                     </div>
 
-                    <v-btn large :disabled="!isTurn || !canCheck" @click="handleCheckClick">Check</v-btn>
-                    <v-btn large :disabled="!isTurn" @click="handleFoldClick">Fold</v-btn>
+                    <v-btn large :disabled="isShowingWinners || !isTurn || !canCheck" @click="handleCheckClick"
+                        >Check</v-btn
+                    >
+                    <v-btn large :disabled="isShowingWinners || !isTurn" @click="handleFoldClick">Fold</v-btn>
                 </v-row>
             </div>
             <div v-else>Loading Game...</div>
@@ -96,6 +105,7 @@ export default {
             showRaiseDialog: false,
             cardFlipAnimations: [],
             isShowingWinners: false,
+            endedByFold: false,
             isDealing: false,
             winnerAnimationDelay: 2.5,
             dealAnimationDelay: 0.25,
@@ -126,8 +136,15 @@ export default {
                     const previousPhase = this.game && this.game.phase
                     const nextPhase = game.phase
 
+                    const nextDealer = game.players.find(p => p.isDealer)
+                    const previousDealer = this.game.players.find(p => p.isDealer)
+
+                    const dealerChanged = previousDealer && nextDealer && nextDealer._id !== previousDealer._id
                     if (previousPhase === 'RIVER' && nextPhase === 'PREFLOP') {
                         this.showWinners(game)
+                    } else if (dealerChanged && this.game.players.length !== 1) {
+                        // round ended because of a fold.
+                        this.showWinners(game, true)
                     } else if (this.game.players.length === 1 && game.players.length > 1) {
                         this.game = game
                         this.deal(game.players.length)
@@ -273,12 +290,14 @@ export default {
                 }, 700)
             })
         },
-        showWinners(nextGame) {
+        showWinners(nextGame, endedByFold) {
             const { winners, players } = nextGame
             this.game.winners = nextGame.winners
-            // Kicks off winner animations.
-            this.isShowingWinners = true
 
+            this.isShowingWinners = true
+            if (endedByFold) {
+                this.endedByFold = true
+            }
             const animationTime = this.winnerAnimationDelay * winners.length
 
             // Show hand type while chips are being distributed.
@@ -291,12 +310,16 @@ export default {
             // Adding some extra time so that the players can look at the board a little longer.
             const extraTime = 3000
 
+            // After the winning animations have finished.
             setTimeout(() => {
-                // After the winning animations have finished.
                 this.isShowingWinners = false
-                this.game = nextGame
-                this.deal(players.length)
+                this.endedByFold = false
                 this.winningHandType = null
+
+                this.game = nextGame
+                if (players.length > 1) {
+                    this.deal(players.length)
+                }
             }, animationTime * 1000 + extraTime)
         },
         deal(playerCount) {

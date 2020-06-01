@@ -24,7 +24,6 @@
 export default {
     props: {
         game: Object,
-        isShowingWinners: Boolean,
         cardFlipAnimations: Array
     }
 }

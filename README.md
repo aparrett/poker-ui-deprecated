@@ -73,7 +73,6 @@ git push
 
 ## Known Issues
 
-* When a player folds, it doesn't show the winning animation.
 * Restarting the server makes a user's hand disappear until they refresh their browser.
 
 ## To-Do
