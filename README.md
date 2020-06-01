@@ -73,7 +73,7 @@ git push
 
 ## Known Issues
 
-* The winning animations are not shown when the last player runs out of chips or leaves.
+* When a player folds, it doesn't show the winning animation.
 * Restarting the server makes a user's hand disappear until they refresh their browser.
 
 ## To-Do
