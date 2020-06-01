@@ -123,16 +123,17 @@ export default {
             socket.emit('joinGame', this.$route.params.id, this.user)
             socket.on('gameUpdate', game => {
                 if (game) {
-                    const nextDealer = game.players.find(p => p.isDealer)
-                    const previousDealer = this.game.players.find(p => p.isDealer)
+                    const previousPhase = this.game && this.game.phase
+                    const nextPhase = game.phase
 
-                    if (nextDealer) {
-                        if (!previousDealer || nextDealer._id !== previousDealer._id) {
-                            return this.showWinners(game)
-                        }
+                    if (previousPhase === 'RIVER' && nextPhase === 'PREFLOP') {
+                        this.showWinners(game)
+                    } else if (this.game.players.length === 1 && game.players.length > 1) {
+                        this.game = game
+                        this.deal(game.players.length)
+                    } else {
+                        this.game = game
                     }
-
-                    this.game = game
                 } else {
                     this.closeGame()
                 }
