@@ -128,7 +128,7 @@ export default {
 
                     if (nextDealer) {
                         if (!previousDealer || nextDealer._id !== previousDealer._id) {
-                            this.showWinners(game.winners, game.players.length)
+                            return this.showWinners(game)
                         }
                     }
 
@@ -272,7 +272,9 @@ export default {
                 }, 700)
             })
         },
-        showWinners(winners, playerCount) {
+        showWinners(nextGame) {
+            const { winners, players } = nextGame
+            this.game.winners = nextGame.winners
             // Kicks off winner animations.
             this.isShowingWinners = true
 
@@ -286,11 +288,13 @@ export default {
             })
 
             // Adding some extra time so that the players can look at the board a little longer.
-            const extraTime = 2000
+            const extraTime = 3000
 
             setTimeout(() => {
+                // After the winning animations have finished.
                 this.isShowingWinners = false
-                this.deal(playerCount)
+                this.game = nextGame
+                this.deal(players.length)
                 this.winningHandType = null
             }, animationTime * 1000 + extraTime)
         },

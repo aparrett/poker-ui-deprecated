@@ -15,7 +15,7 @@
 export default {
     props: {
         game: Object,
-        winnerAnimationDelay: Boolean
+        winnerAnimationDelay: Number
     }
 }
 </script>

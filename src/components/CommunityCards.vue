@@ -17,16 +17,6 @@
                 </div>
             </div>
         </div>
-        <div v-else-if="isShowingWinners" class="d-flex community-container">
-            <div class="card flip-card flipped" v-for="card in game.previousCommunityCards" :key="card">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front" />
-                    <div class="flip-card-back">
-                        <img :src="`/images/cards/${card}.svg`" />
-                    </div>
-                </div>
-            </div>
-        </div>
     </v-row>
 </template>
 
