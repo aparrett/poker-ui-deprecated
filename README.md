@@ -73,9 +73,7 @@ git push
 
 ## Known Issues
 
-* During the winning animation the user sees their new cards instead of their old ones because the next deal has already happened.
 * When a player folds in a 1v1, it shows the winner's cards. This should not happen.
-* The winning animations are not shown when the last player runs out of chips or leaves.
 * Restarting the server makes a user's hand disappear until they refresh their browser.
 
 ## To-Do
