@@ -135,18 +135,15 @@ export default {
             socket.emit('joinGame', this.$route.params.id, this.user)
             socket.on('gameUpdate', game => {
                 if (game) {
-                    const previousPhase = this.game && this.game.phase
-                    const nextPhase = game.phase
-
                     const nextDealer = game.players.find(p => p.isDealer)
                     const previousDealer = this.game.players.find(p => p.isDealer)
 
                     const dealerChanged = previousDealer && nextDealer && nextDealer._id !== previousDealer._id
-                    if (previousPhase === 'RIVER' && nextPhase === 'PREFLOP') {
+                    if (
+                        (this.game.players.length !== 1 && dealerChanged) ||
+                        (this.game.players.length > 1 && game.players.length === 1)
+                    ) {
                         this.showWinners(game)
-                    } else if (dealerChanged && this.game.players.length !== 1) {
-                        // round ended because of a fold.
-                        this.showWinners(game, true)
                     } else if (this.game.players.length === 1 && game.players.length > 1) {
                         this.game = game
                         this.deal(game.players.length)
@@ -292,12 +289,12 @@ export default {
                 }, 700)
             })
         },
-        showWinners(nextGame, endedByFold) {
+        showWinners(nextGame) {
             const { winners, players } = nextGame
             this.game.winners = nextGame.winners
 
             this.isShowingWinners = true
-            if (endedByFold) {
+            if (nextGame.endedByFold) {
                 this.endedByFold = true
             }
             const animationTime = this.winnerAnimationDelay * winners.length
@@ -310,7 +307,7 @@ export default {
             })
 
             // Adding some extra time so that the players can look at the board a little longer.
-            const extraTime = 3000
+            const extraTime = this.game.phase === 'RIVER' ? 3000 : 1000
 
             // After the winning animations have finished.
             setTimeout(() => {

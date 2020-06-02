@@ -74,6 +74,7 @@ git push
 ## Known Issues
 
 * Restarting the server makes a user's hand disappear until they refresh their browser.
+* The styles are not responsive.
 
 ## To-Do
 
