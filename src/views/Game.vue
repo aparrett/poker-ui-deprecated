@@ -191,7 +191,9 @@ export default {
             this.$router.push('/')
 
             try {
-                await leaveTable(this.game._id)
+                if (this.userPlayer) {
+                    await leaveTable(this.game._id)
+                }
             } catch (e) {
                 /* eslint-disable no-console */
                 console.log(e)
