@@ -75,7 +75,7 @@ git push
 
 * Restarting the server makes a user's hand disappear until they refresh their browser.
 * The styles are not responsive.
-* Because the app is on Heroku and I'm not paying for the live server, the UI and API take a while to boot up.
+* Because the app is on Heroku and I'm not paying for the live server, the UI and API take several seconds to boot up.
 
 ## To-Do
 
