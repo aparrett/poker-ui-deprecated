@@ -73,6 +73,7 @@ git push
 
 ## Known Issues
 
+* There are abandoned games in the list because the server does not delete abandoned games automatically.
 * Restarting the server makes a user's hand disappear until they refresh their browser.
 * The styles are not responsive.
 * Because the app is on Heroku and I'm not paying for the live server, the UI and API take several seconds to boot up.
