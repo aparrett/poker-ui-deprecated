@@ -1,7 +1,17 @@
 {
   "name": "poker",
   "version": "0.1.0",
-  "private": true,
+  "description": "An app where you can play Texas Hold'em poker with your friends. Works along with aparrett/poker-api server repo.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aparrett/poker-ui.git"
+  },
+  "license": "ISC",
+  "author": "Anthony Parrett",
+  "bugs": {
+    "url": "https://github.com/aparrett/poker-ui/issues"
+  },
+  "homepage": "https://github.com/aparrett/poker-ui#readme",
   "scripts": {
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
