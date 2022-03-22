@@ -113,6 +113,7 @@ export default {
                     'Number of Bots should be a whole number',
                 v => (v && parseInt(v) < this.maxPlayers) || 'Number of bots should be less than total allowed players.'
             ],
+            botLevel: null,
             botLevelOptions: ['Easy', 'Medium', 'Hard'],
             botLevelRules: [
                 v => (parseInt(this.numBots) > 0 ? !!v : true) || 'Bot Level is required for non-zero number of bots',

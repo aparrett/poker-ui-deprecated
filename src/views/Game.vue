@@ -2,7 +2,7 @@
     <v-content>
         <v-container>
             <div v-if="game">
-                <v-row style="justify-content: center;">
+                <v-row style="justify-content: center">
                     <div id="table">
                         <v-btn small class="leave-btn" @click="handleLeaveClick"
                             ><v-icon left>arrow_back</v-icon>Leave</v-btn
@@ -196,7 +196,7 @@ export default {
                 }
             } catch (e) {
                 /* eslint-disable no-console */
-                console.log(e)
+                console.error(e)
             }
         },
         async handleCallClick() {
