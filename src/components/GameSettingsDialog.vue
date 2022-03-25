@@ -21,6 +21,13 @@
                             :rules="maxBuyInRules"
                         />
                         <v-text-field
+                            id="userBuyIn"
+                            label="Your Buy-In"
+                            name="userBuyIn"
+                            v-model="userBuyIn"
+                            :rules="userBuyInRules"
+                        />
+                        <v-text-field
                             id="bigBlind"
                             label="Big Blind"
                             name="bigBlind"
@@ -75,6 +82,14 @@ export default {
                 v => (v && parseInt(v) > this.bigBlind) || 'The max buy-in amount must greater than the big blind.',
                 v => (v && parseInt(v) <= 10000) || 'The max buy-in cannot be more than 10000.'
             ],
+            userBuyIn: 10000,
+            userBuyInRules: [
+                v => !!v || "User's Buy-In amount is required",
+                v => (v && parseInt(v) > 0) || 'The buy-in amount must be greater than 0.',
+                v => Number.isInteger(parseInt(v)) || 'The buy-in amount must be an integer.',
+                v => (v && parseInt(v) > this.bigBlind) || 'The buy-in amount must greater than the big blind.',
+                v => (v && parseInt(v) <= this.maxBuyIn) || 'The buy-in cannot be more than the Max Buy-in.'
+            ],
             bigBlind: 20,
             bigBlindRules: [
                 v => !!v || 'Big blind is required',
@@ -104,6 +119,7 @@ export default {
                         name: this.name,
                         maxPlayers: this.maxPlayers,
                         maxBuyIn: this.maxBuyIn,
+                        userBuyIn: this.userBuyIn,
                         bigBlind: this.bigBlind,
                         smallBlind: this.smallBlind
                     })
