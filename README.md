@@ -1,6 +1,6 @@
 # poker-app-ui
 
-An app where you can play Texas Hold'em poker with your friends. Click [here](https://poker-friends.herokuapp.com/) to play. (The servers are running on free Heroku instances and will take several seconds to boot up.)
+Play Texas Hold'em poker! Click [here](https://poker-friends.herokuapp.com/) to play. (The servers are running on free Heroku instances and will take several seconds to boot up.)
 
 ## Project setup
 
